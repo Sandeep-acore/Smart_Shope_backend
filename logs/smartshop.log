@@ -1,0 +1,782 @@
+2025-03-18 11:14:48 [main] INFO  c.smartshop.api.SmartShopApplication - Starting SmartShopApplication using Java 17.0.14 on DESKTOP-S89GGIS with PID 6172 (C:\Users\Sahu Safe Services\Desktop\Smart_Shop\target\classes started by Sahu Safe Services in C:\Users\Sahu Safe Services\Desktop\Smart_Shop)
+2025-03-18 11:14:48 [main] DEBUG c.smartshop.api.SmartShopApplication - Running with Spring Boot v2.7.14, Spring v5.3.29
+2025-03-18 11:14:48 [main] INFO  c.smartshop.api.SmartShopApplication - No active profile set, falling back to 1 default profile: "default"
+2025-03-18 11:14:51 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-18 11:14:52 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 509 ms. Found 9 JPA repository interfaces.
+2025-03-18 11:14:57 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-03-18 11:14:57 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-03-18 11:14:57 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.78]
+2025-03-18 11:14:58 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-03-18 11:14:58 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 9971 ms
+2025-03-18 11:15:00 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-03-18 11:15:00 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-03-18 11:15:01 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.15.Final
+2025-03-18 11:15:01 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-03-18 11:15:02 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-03-18 11:15:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-03-18 11:15:04 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2025-03-18 11:15:10 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-03-18 11:15:10 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-03-18 11:15:13 [main] DEBUG c.s.api.security.jwt.AuthTokenFilter - Filter 'authenticationJwtTokenFilter' configured for use
+2025-03-18 11:15:19 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@6c120b00, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@d8a2b1b, org.springframework.security.web.context.SecurityContextPersistenceFilter@55a5eea3, org.springframework.security.web.header.HeaderWriterFilter@63d14dbf, org.springframework.web.filter.CorsFilter@2709e075, org.springframework.security.web.authentication.logout.LogoutFilter@43c3354, com.smartshop.api.security.jwt.AuthTokenFilter@13731ff4, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@66428512, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@20ad64c, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3328db4f, org.springframework.security.web.session.SessionManagementFilter@16e0afab, org.springframework.security.web.access.ExceptionTranslationFilter@2566247d, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@6939f18a]
+2025-03-18 11:15:21 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/api'
+2025-03-18 11:15:21 [main] INFO  c.smartshop.api.SmartShopApplication - Started SmartShopApplication in 34.953 seconds (JVM running for 36.397)
+2025-03-18 11:15:21 [main] DEBUG org.hibernate.SQL - 
+    select
+        count(*) as col_0_0_ 
+    from
+        roles role0_
+2025-03-18 11:15:21 [main] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as col_0_0_ 
+    from
+        users user0_ 
+    where
+        user0_.email=? limit ?
+2025-03-18 11:15:21 [main] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [admin@smartshop.com]
+2025-03-18 11:19:02 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-18 11:19:02 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-03-18 11:19:02 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 15 ms
+2025-03-18 11:19:03 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as id1_9_,
+        user0_.address_line1 as address_2_9_,
+        user0_.address_line2 as address_3_9_,
+        user0_.city as city4_9_,
+        user0_.country as country5_9_,
+        user0_.created_at as created_6_9_,
+        user0_.email as email7_9_,
+        user0_.name as name8_9_,
+        user0_.otp as otp9_9_,
+        user0_.otp_expiry_time as otp_exp10_9_,
+        user0_.password as passwor11_9_,
+        user0_.phone as phone12_9_,
+        user0_.postal_code as postal_13_9_,
+        user0_.profile_image as profile14_9_,
+        user0_.referral_code as referra15_9_,
+        user0_.reset_password_token as reset_p16_9_,
+        user0_.state as state17_9_,
+        user0_.updated_at as updated18_9_ 
+    from
+        users user0_ 
+    where
+        user0_.email=?
+2025-03-18 11:19:03 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [user@example.com]
+2025-03-18 11:19:04 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        roles0_.user_id as user_id1_8_0_,
+        roles0_.role_id as role_id2_8_0_,
+        role1_.id as id1_7_1_,
+        role1_.name as name2_7_1_ 
+    from
+        user_roles roles0_ 
+    inner join
+        roles role1_ 
+            on roles0_.role_id=role1_.id 
+    where
+        roles0_.user_id=?
+2025-03-18 11:19:04 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+2025-03-18 11:19:05 [http-nio-8080-exec-2] INFO  c.s.api.controllers.AuthController - Fetching profile for user: user@example.com
+2025-03-18 11:19:05 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as id1_9_0_,
+        user0_.address_line1 as address_2_9_0_,
+        user0_.address_line2 as address_3_9_0_,
+        user0_.city as city4_9_0_,
+        user0_.country as country5_9_0_,
+        user0_.created_at as created_6_9_0_,
+        user0_.email as email7_9_0_,
+        user0_.name as name8_9_0_,
+        user0_.otp as otp9_9_0_,
+        user0_.otp_expiry_time as otp_exp10_9_0_,
+        user0_.password as passwor11_9_0_,
+        user0_.phone as phone12_9_0_,
+        user0_.postal_code as postal_13_9_0_,
+        user0_.profile_image as profile14_9_0_,
+        user0_.referral_code as referra15_9_0_,
+        user0_.reset_password_token as reset_p16_9_0_,
+        user0_.state as state17_9_0_,
+        user0_.updated_at as updated18_9_0_ 
+    from
+        users user0_ 
+    where
+        user0_.id=?
+2025-03-18 11:19:05 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+2025-03-18 11:19:05 [http-nio-8080-exec-2] DEBUG c.s.api.controllers.AuthController - User profile found: user@example.com
+2025-03-18 11:19:05 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        roles0_.user_id as user_id1_8_0_,
+        roles0_.role_id as role_id2_8_0_,
+        role1_.id as id1_7_1_,
+        role1_.name as name2_7_1_ 
+    from
+        user_roles roles0_ 
+    inner join
+        roles role1_ 
+            on roles0_.role_id=role1_.id 
+    where
+        roles0_.user_id=?
+2025-03-18 11:19:05 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+2025-03-18 11:19:05 [http-nio-8080-exec-2] DEBUG c.s.api.controllers.AuthController - Returning user profile with address: {country=PK, city=BPL, postalCode=402022, addressLine1=1, addressLine2=2, state=BIHAR}
+2025-03-18 11:20:44 [http-nio-8080-exec-5] ERROR c.s.a.e.GlobalExceptionHandler - Access denied exception: Access is denied
+2025-03-18 11:20:53 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as id1_9_,
+        user0_.address_line1 as address_2_9_,
+        user0_.address_line2 as address_3_9_,
+        user0_.city as city4_9_,
+        user0_.country as country5_9_,
+        user0_.created_at as created_6_9_,
+        user0_.email as email7_9_,
+        user0_.name as name8_9_,
+        user0_.otp as otp9_9_,
+        user0_.otp_expiry_time as otp_exp10_9_,
+        user0_.password as passwor11_9_,
+        user0_.phone as phone12_9_,
+        user0_.postal_code as postal_13_9_,
+        user0_.profile_image as profile14_9_,
+        user0_.referral_code as referra15_9_,
+        user0_.reset_password_token as reset_p16_9_,
+        user0_.state as state17_9_,
+        user0_.updated_at as updated18_9_ 
+    from
+        users user0_ 
+    where
+        user0_.email=?
+2025-03-18 11:20:53 [http-nio-8080-exec-6] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [user@example.com]
+2025-03-18 11:20:53 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        roles0_.user_id as user_id1_8_0_,
+        roles0_.role_id as role_id2_8_0_,
+        role1_.id as id1_7_1_,
+        role1_.name as name2_7_1_ 
+    from
+        user_roles roles0_ 
+    inner join
+        roles role1_ 
+            on roles0_.role_id=role1_.id 
+    where
+        roles0_.user_id=?
+2025-03-18 11:20:53 [http-nio-8080-exec-6] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+2025-03-18 11:20:53 [http-nio-8080-exec-6] INFO  c.s.api.controllers.AuthController - Fetching profile for user: user@example.com
+2025-03-18 11:20:53 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as id1_9_0_,
+        user0_.address_line1 as address_2_9_0_,
+        user0_.address_line2 as address_3_9_0_,
+        user0_.city as city4_9_0_,
+        user0_.country as country5_9_0_,
+        user0_.created_at as created_6_9_0_,
+        user0_.email as email7_9_0_,
+        user0_.name as name8_9_0_,
+        user0_.otp as otp9_9_0_,
+        user0_.otp_expiry_time as otp_exp10_9_0_,
+        user0_.password as passwor11_9_0_,
+        user0_.phone as phone12_9_0_,
+        user0_.postal_code as postal_13_9_0_,
+        user0_.profile_image as profile14_9_0_,
+        user0_.referral_code as referra15_9_0_,
+        user0_.reset_password_token as reset_p16_9_0_,
+        user0_.state as state17_9_0_,
+        user0_.updated_at as updated18_9_0_ 
+    from
+        users user0_ 
+    where
+        user0_.id=?
+2025-03-18 11:20:53 [http-nio-8080-exec-6] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+2025-03-18 11:20:53 [http-nio-8080-exec-6] DEBUG c.s.api.controllers.AuthController - User profile found: user@example.com
+2025-03-18 11:20:53 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        roles0_.user_id as user_id1_8_0_,
+        roles0_.role_id as role_id2_8_0_,
+        role1_.id as id1_7_1_,
+        role1_.name as name2_7_1_ 
+    from
+        user_roles roles0_ 
+    inner join
+        roles role1_ 
+            on roles0_.role_id=role1_.id 
+    where
+        roles0_.user_id=?
+2025-03-18 11:20:53 [http-nio-8080-exec-6] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+2025-03-18 11:20:53 [http-nio-8080-exec-6] DEBUG c.s.api.controllers.AuthController - Returning user profile with address: {country=PK, city=BPL, postalCode=402022, addressLine1=1, addressLine2=2, state=BIHAR}
+2025-03-18 11:21:11 [http-nio-8080-exec-7] ERROR c.s.a.security.jwt.AuthEntryPointJwt - Unauthorized error: Full authentication is required to access this resource
+2025-03-18 11:21:24 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as id1_9_,
+        user0_.address_line1 as address_2_9_,
+        user0_.address_line2 as address_3_9_,
+        user0_.city as city4_9_,
+        user0_.country as country5_9_,
+        user0_.created_at as created_6_9_,
+        user0_.email as email7_9_,
+        user0_.name as name8_9_,
+        user0_.otp as otp9_9_,
+        user0_.otp_expiry_time as otp_exp10_9_,
+        user0_.password as passwor11_9_,
+        user0_.phone as phone12_9_,
+        user0_.postal_code as postal_13_9_,
+        user0_.profile_image as profile14_9_,
+        user0_.referral_code as referra15_9_,
+        user0_.reset_password_token as reset_p16_9_,
+        user0_.state as state17_9_,
+        user0_.updated_at as updated18_9_ 
+    from
+        users user0_ 
+    where
+        user0_.email=?
+2025-03-18 11:21:24 [http-nio-8080-exec-9] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [admin@example.com]
+2025-03-18 11:21:24 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        roles0_.user_id as user_id1_8_0_,
+        roles0_.role_id as role_id2_8_0_,
+        role1_.id as id1_7_1_,
+        role1_.name as name2_7_1_ 
+    from
+        user_roles roles0_ 
+    inner join
+        roles role1_ 
+            on roles0_.role_id=role1_.id 
+    where
+        roles0_.user_id=?
+2025-03-18 11:21:24 [http-nio-8080-exec-9] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [4]
+2025-03-18 11:21:46 [http-nio-8080-exec-8] ERROR c.s.a.security.jwt.AuthEntryPointJwt - Unauthorized error: Full authentication is required to access this resource
+2025-03-18 11:22:00 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as id1_9_,
+        user0_.address_line1 as address_2_9_,
+        user0_.address_line2 as address_3_9_,
+        user0_.city as city4_9_,
+        user0_.country as country5_9_,
+        user0_.created_at as created_6_9_,
+        user0_.email as email7_9_,
+        user0_.name as name8_9_,
+        user0_.otp as otp9_9_,
+        user0_.otp_expiry_time as otp_exp10_9_,
+        user0_.password as passwor11_9_,
+        user0_.phone as phone12_9_,
+        user0_.postal_code as postal_13_9_,
+        user0_.profile_image as profile14_9_,
+        user0_.referral_code as referra15_9_,
+        user0_.reset_password_token as reset_p16_9_,
+        user0_.state as state17_9_,
+        user0_.updated_at as updated18_9_ 
+    from
+        users user0_ 
+    where
+        user0_.email=?
+2025-03-18 11:22:00 [http-nio-8080-exec-10] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [user@example.com]
+2025-03-18 11:22:00 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        roles0_.user_id as user_id1_8_0_,
+        roles0_.role_id as role_id2_8_0_,
+        role1_.id as id1_7_1_,
+        role1_.name as name2_7_1_ 
+    from
+        user_roles roles0_ 
+    inner join
+        roles role1_ 
+            on roles0_.role_id=role1_.id 
+    where
+        roles0_.user_id=?
+2025-03-18 11:22:00 [http-nio-8080-exec-10] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [2]
+2025-03-18 11:22:00 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        order0_.id as id1_5_0_,
+        order0_.coupon_code as coupon_c2_5_0_,
+        order0_.created_at as created_3_5_0_,
+        order0_.delivered_at as delivere4_5_0_,
+        order0_.delivery_address_id as deliver16_5_0_,
+        order0_.discount as discount5_5_0_,
+        order0_.notes as notes6_5_0_,
+        order0_.payment_method as payment_7_5_0_,
+        order0_.payment_status as payment_8_5_0_,
+        order0_.shipping_address_id as shippin17_5_0_,
+        order0_.shipping_cost as shipping9_5_0_,
+        order0_.status as status10_5_0_,
+        order0_.subtotal as subtota11_5_0_,
+        order0_.tax as tax12_5_0_,
+        order0_.total as total13_5_0_,
+        order0_.transaction_id as transac14_5_0_,
+        order0_.updated_at as updated15_5_0_,
+        order0_.user_id as user_id18_5_0_,
+        address1_.id as id1_0_1_,
+        address1_.address_line1 as address_2_0_1_,
+        address1_.address_line2 as address_3_0_1_,
+        address1_.city as city4_0_1_,
+        address1_.country as country5_0_1_,
+        address1_.postal_code as postal_c6_0_1_,
+        address1_.state as state7_0_1_,
+        address1_.user_id as user_id8_0_1_,
+        user2_.id as id1_9_2_,
+        user2_.address_line1 as address_2_9_2_,
+        user2_.address_line2 as address_3_9_2_,
+        user2_.city as city4_9_2_,
+        user2_.country as country5_9_2_,
+        user2_.created_at as created_6_9_2_,
+        user2_.email as email7_9_2_,
+        user2_.name as name8_9_2_,
+        user2_.otp as otp9_9_2_,
+        user2_.otp_expiry_time as otp_exp10_9_2_,
+        user2_.password as passwor11_9_2_,
+        user2_.phone as phone12_9_2_,
+        user2_.postal_code as postal_13_9_2_,
+        user2_.profile_image as profile14_9_2_,
+        user2_.referral_code as referra15_9_2_,
+        user2_.reset_password_token as reset_p16_9_2_,
+        user2_.state as state17_9_2_,
+        user2_.updated_at as updated18_9_2_,
+        address3_.id as id1_0_3_,
+        address3_.address_line1 as address_2_0_3_,
+        address3_.address_line2 as address_3_0_3_,
+        address3_.city as city4_0_3_,
+        address3_.country as country5_0_3_,
+        address3_.postal_code as postal_c6_0_3_,
+        address3_.state as state7_0_3_,
+        address3_.user_id as user_id8_0_3_,
+        user4_.id as id1_9_4_,
+        user4_.address_line1 as address_2_9_4_,
+        user4_.address_line2 as address_3_9_4_,
+        user4_.city as city4_9_4_,
+        user4_.country as country5_9_4_,
+        user4_.created_at as created_6_9_4_,
+        user4_.email as email7_9_4_,
+        user4_.name as name8_9_4_,
+        user4_.otp as otp9_9_4_,
+        user4_.otp_expiry_time as otp_exp10_9_4_,
+        user4_.password as passwor11_9_4_,
+        user4_.phone as phone12_9_4_,
+        user4_.postal_code as postal_13_9_4_,
+        user4_.profile_image as profile14_9_4_,
+        user4_.referral_code as referra15_9_4_,
+        user4_.reset_password_token as reset_p16_9_4_,
+        user4_.state as state17_9_4_,
+        user4_.updated_at as updated18_9_4_ 
+    from
+        orders order0_ 
+    left outer join
+        addresses address1_ 
+            on order0_.delivery_address_id=address1_.id 
+    left outer join
+        users user2_ 
+            on address1_.user_id=user2_.id 
+    left outer join
+        addresses address3_ 
+            on order0_.shipping_address_id=address3_.id 
+    inner join
+        users user4_ 
+            on order0_.user_id=user4_.id 
+    where
+        order0_.id=?
+2025-03-18 11:22:00 [http-nio-8080-exec-10] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+2025-03-18 11:25:37 [http-nio-8080-exec-3] ERROR c.s.a.security.jwt.AuthEntryPointJwt - Unauthorized error: Full authentication is required to access this resource
+2025-03-18 11:27:00 [http-nio-8080-exec-6] ERROR c.s.api.security.jwt.JwtUtils - Invalid JWT token: JWT strings must contain exactly 2 period characters. Found: 0
+2025-03-18 11:27:00 [http-nio-8080-exec-6] ERROR c.s.a.security.jwt.AuthEntryPointJwt - Unauthorized error: Full authentication is required to access this resource
+2025-03-18 11:31:08 [http-nio-8080-exec-8] ERROR c.s.api.security.jwt.JwtUtils - Invalid JWT token: JWT strings must contain exactly 2 period characters. Found: 0
+2025-03-18 11:31:08 [http-nio-8080-exec-8] ERROR c.s.a.e.GlobalExceptionHandler - Unhandled exception: 
+org.springframework.web.HttpMediaTypeNotSupportedException: Content type 'multipart/form-data;boundary=--------------------------628870161403191714093858;charset=UTF-8' not supported
+	at org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodArgumentResolver.readWithMessageConverters(AbstractMessageConverterMethodArgumentResolver.java:211)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.readWithMessageConverters(RequestResponseBodyMethodProcessor.java:160)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.resolveArgument(RequestResponseBodyMethodProcessor.java:133)
+	at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122)
+	at org.springframework.web.method.support.InvocableHandlerMethod.getMethodArgumentValues(InvocableHandlerMethod.java:179)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:146)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:808)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1072)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:555)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:623)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:209)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:111)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:337)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:115)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:81)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:122)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:126)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:81)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:109)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:149)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at com.smartshop.api.security.jwt.AuthTokenFilter.doFilterInternal(AuthTokenFilter.java:48)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:103)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:89)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:112)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:82)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:55)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:221)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:186)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:354)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:267)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:481)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:130)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:390)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+2025-03-18 11:33:05 [http-nio-8080-exec-1] INFO  c.s.api.controllers.AuthController - Processing registration request for user: admin@gmail.com
+2025-03-18 11:33:05 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as col_0_0_ 
+    from
+        users user0_ 
+    where
+        user0_.email=? limit ?
+2025-03-18 11:33:05 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [admin@gmail.com]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] DEBUG c.s.api.controllers.AuthController - Processing role: ROLE_ADMIN
+2025-03-18 11:33:06 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        role0_.id as id1_7_,
+        role0_.name as name2_7_ 
+    from
+        roles role0_ 
+    where
+        role0_.name=?
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [ROLE_USER]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] DEBUG c.s.api.controllers.AuthController - Saving user with roles: [Role(id=1, name=ROLE_USER)]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        users
+        (address_line1, address_line2, city, country, created_at, email, name, otp, otp_expiry_time, password, phone, postal_code, profile_image, referral_code, reset_password_token, state, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [4] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [5] as [TIMESTAMP] - [2025-03-18T11:33:06.470073200]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [6] as [VARCHAR] - [admin@gmail.com]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [7] as [VARCHAR] - [ADMIN]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [8] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [9] as [TIMESTAMP] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [10] as [VARCHAR] - [$2a$10$W2VDpehgn19C0kPRuuVPAuM1jzMNvp0KtQ0R8lYm1GHHKimzBVnW2]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [11] as [VARCHAR] - [9999999999]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [12] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [13] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [14] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [15] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [16] as [VARCHAR] - [null]
+2025-03-18 11:33:06 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [17] as [TIMESTAMP] - [2025-03-18T11:33:06.471073800]
+2025-03-18 11:33:07 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        user_roles
+        (user_id, role_id) 
+    values
+        (?, ?)
+2025-03-18 11:33:07 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [6]
+2025-03-18 11:33:07 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [2] as [INTEGER] - [1]
+2025-03-18 11:33:07 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as id1_9_,
+        user0_.address_line1 as address_2_9_,
+        user0_.address_line2 as address_3_9_,
+        user0_.city as city4_9_,
+        user0_.country as country5_9_,
+        user0_.created_at as created_6_9_,
+        user0_.email as email7_9_,
+        user0_.name as name8_9_,
+        user0_.otp as otp9_9_,
+        user0_.otp_expiry_time as otp_exp10_9_,
+        user0_.password as passwor11_9_,
+        user0_.phone as phone12_9_,
+        user0_.postal_code as postal_13_9_,
+        user0_.profile_image as profile14_9_,
+        user0_.referral_code as referra15_9_,
+        user0_.reset_password_token as reset_p16_9_,
+        user0_.state as state17_9_,
+        user0_.updated_at as updated18_9_ 
+    from
+        users user0_ 
+    where
+        user0_.email=?
+2025-03-18 11:33:07 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [admin@gmail.com]
+2025-03-18 11:33:07 [http-nio-8080-exec-1] INFO  c.s.api.controllers.AuthController - User registered successfully: admin@gmail.com
+2025-03-18 11:34:07 [http-nio-8080-exec-2] INFO  c.s.api.controllers.AuthController - Processing registration request for user: admin1@gmail.com
+2025-03-18 11:34:07 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as col_0_0_ 
+    from
+        users user0_ 
+    where
+        user0_.email=? limit ?
+2025-03-18 11:34:07 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [admin1@gmail.com]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] DEBUG c.s.api.controllers.AuthController - Processing role: ROLE_ADMIN
+2025-03-18 11:34:08 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        role0_.id as id1_7_,
+        role0_.name as name2_7_ 
+    from
+        roles role0_ 
+    where
+        role0_.name=?
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [ROLE_USER]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] DEBUG c.s.api.controllers.AuthController - Saving user with roles: [Role(id=1, name=ROLE_USER)]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        users
+        (address_line1, address_line2, city, country, created_at, email, name, otp, otp_expiry_time, password, phone, postal_code, profile_image, referral_code, reset_password_token, state, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [2] as [VARCHAR] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [4] as [VARCHAR] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [5] as [TIMESTAMP] - [2025-03-18T11:34:08.771515100]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [6] as [VARCHAR] - [admin1@gmail.com]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [7] as [VARCHAR] - [ADMIN_1]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [8] as [VARCHAR] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [9] as [TIMESTAMP] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [10] as [VARCHAR] - [$2a$10$0OElRH5hKuFlE29ugo2ds.y0koIik/zFkIdMljBQal1m5racl8VBq]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [11] as [VARCHAR] - [9999999999]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [12] as [VARCHAR] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [13] as [VARCHAR] - [profiles/289b740e-5f86-4991-8114-16dd1b593a34.png]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [14] as [VARCHAR] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [15] as [VARCHAR] - [null]
+2025-03-18 11:34:08 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [16] as [VARCHAR] - [null]
+2025-03-18 11:34:09 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [17] as [TIMESTAMP] - [2025-03-18T11:34:08.771515100]
+2025-03-18 11:34:09 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        user_roles
+        (user_id, role_id) 
+    values
+        (?, ?)
+2025-03-18 11:34:09 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [7]
+2025-03-18 11:34:09 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [2] as [INTEGER] - [1]
+2025-03-18 11:34:09 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as id1_9_,
+        user0_.address_line1 as address_2_9_,
+        user0_.address_line2 as address_3_9_,
+        user0_.city as city4_9_,
+        user0_.country as country5_9_,
+        user0_.created_at as created_6_9_,
+        user0_.email as email7_9_,
+        user0_.name as name8_9_,
+        user0_.otp as otp9_9_,
+        user0_.otp_expiry_time as otp_exp10_9_,
+        user0_.password as passwor11_9_,
+        user0_.phone as phone12_9_,
+        user0_.postal_code as postal_13_9_,
+        user0_.profile_image as profile14_9_,
+        user0_.referral_code as referra15_9_,
+        user0_.reset_password_token as reset_p16_9_,
+        user0_.state as state17_9_,
+        user0_.updated_at as updated18_9_ 
+    from
+        users user0_ 
+    where
+        user0_.email=?
+2025-03-18 11:34:09 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [admin1@gmail.com]
+2025-03-18 11:34:09 [http-nio-8080-exec-2] INFO  c.s.api.controllers.AuthController - User registered successfully: admin1@gmail.com
+2025-03-18 11:34:09 [http-nio-8080-exec-2] WARN  o.s.w.m.s.StandardServletMultipartResolver - Failed to perform cleanup of multipart items
+java.io.UncheckedIOException: Cannot delete C:\Users\Sahu Safe Services\AppData\Local\Temp\tomcat.8080.7427133467479319193\work\Tomcat\localhost\api\upload_b5a23fcb_bcc5_486e_a877_64a1b6866024_00000015.tmp
+	at org.apache.tomcat.util.http.fileupload.disk.DiskFileItem.delete(DiskFileItem.java:431)
+	at org.apache.catalina.core.ApplicationPart.delete(ApplicationPart.java:53)
+	at org.springframework.web.multipart.support.StandardServletMultipartResolver.cleanupMultipart(StandardServletMultipartResolver.java:134)
+	at org.springframework.web.servlet.DispatcherServlet.cleanupMultipart(DispatcherServlet.java:1251)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1108)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:965)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1006)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:909)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:555)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:623)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:209)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:111)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:337)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:115)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:81)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:122)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:126)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:81)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:109)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:149)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at com.smartshop.api.security.jwt.AuthTokenFilter.doFilterInternal(AuthTokenFilter.java:48)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:103)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:89)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:112)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:82)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:55)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:346)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:221)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:186)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:354)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:267)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:178)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:153)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:481)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:130)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:343)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:390)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.io.IOException: Cannot delete C:\Users\Sahu Safe Services\AppData\Local\Temp\tomcat.8080.7427133467479319193\work\Tomcat\localhost\api\upload_b5a23fcb_bcc5_486e_a877_64a1b6866024_00000015.tmp
+	... 91 common frames omitted
+2025-03-18 11:34:09 [http-nio-8080-exec-2] ERROR o.a.coyote.http11.Http11Processor - Error processing request
+java.io.UncheckedIOException: Cannot delete C:\Users\Sahu Safe Services\AppData\Local\Temp\tomcat.8080.7427133467479319193\work\Tomcat\localhost\api\upload_b5a23fcb_bcc5_486e_a877_64a1b6866024_00000015.tmp
+	at org.apache.tomcat.util.http.fileupload.disk.DiskFileItem.delete(DiskFileItem.java:431)
+	at org.apache.catalina.core.ApplicationPart.delete(ApplicationPart.java:53)
+	at org.apache.catalina.connector.Request.recycle(Request.java:475)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:421)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:390)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.io.IOException: Cannot delete C:\Users\Sahu Safe Services\AppData\Local\Temp\tomcat.8080.7427133467479319193\work\Tomcat\localhost\api\upload_b5a23fcb_bcc5_486e_a877_64a1b6866024_00000015.tmp
+	... 13 common frames omitted
+2025-03-18 11:34:09 [http-nio-8080-exec-2] ERROR o.a.coyote.http11.Http11NioProtocol - Error reading request, ignored
+java.io.UncheckedIOException: Cannot delete C:\Users\Sahu Safe Services\AppData\Local\Temp\tomcat.8080.7427133467479319193\work\Tomcat\localhost\api\upload_b5a23fcb_bcc5_486e_a877_64a1b6866024_00000015.tmp
+	at org.apache.tomcat.util.http.fileupload.disk.DiskFileItem.delete(DiskFileItem.java:431)
+	at org.apache.catalina.core.ApplicationPart.delete(ApplicationPart.java:53)
+	at org.apache.catalina.connector.Request.recycle(Request.java:475)
+	at org.apache.catalina.connector.CoyoteAdapter.log(CoyoteAdapter.java:494)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:420)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:926)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.io.IOException: Cannot delete C:\Users\Sahu Safe Services\AppData\Local\Temp\tomcat.8080.7427133467479319193\work\Tomcat\localhost\api\upload_b5a23fcb_bcc5_486e_a877_64a1b6866024_00000015.tmp
+	... 13 common frames omitted
+2025-03-18 11:34:09 [http-nio-8080-exec-2] ERROR o.apache.tomcat.util.net.NioEndpoint - Error running socket processor
+java.io.UncheckedIOException: Cannot delete C:\Users\Sahu Safe Services\AppData\Local\Temp\tomcat.8080.7427133467479319193\work\Tomcat\localhost\api\upload_b5a23fcb_bcc5_486e_a877_64a1b6866024_00000015.tmp
+	at org.apache.tomcat.util.http.fileupload.disk.DiskFileItem.delete(DiskFileItem.java:431)
+	at org.apache.catalina.core.ApplicationPart.delete(ApplicationPart.java:53)
+	at org.apache.catalina.connector.Request.recycle(Request.java:475)
+	at org.apache.catalina.connector.CoyoteAdapter.log(CoyoteAdapter.java:494)
+	at org.apache.catalina.connector.CoyoteAdapter.checkRecycled(CoyoteAdapter.java:517)
+	at org.apache.coyote.http11.Http11Processor.recycle(Http11Processor.java:1417)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.release(AbstractProtocol.java:1129)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1090)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1791)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.io.IOException: Cannot delete C:\Users\Sahu Safe Services\AppData\Local\Temp\tomcat.8080.7427133467479319193\work\Tomcat\localhost\api\upload_b5a23fcb_bcc5_486e_a877_64a1b6866024_00000015.tmp
+	... 14 common frames omitted
+2025-03-18 12:36:49 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-03-18 12:36:49 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-03-18 12:36:49 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
