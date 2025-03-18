@@ -43,4 +43,7 @@ application-*.properties
 
 # OS specific
 .DS_Store
-Thumbs.db 
+Thumbs.db
+
+# Exception for production properties
+!src/main/resources/application-prod.properties 

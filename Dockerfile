@@ -9,7 +9,28 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 COPY src/main/resources/application.properties application.properties
-COPY src/main/resources/application-prod.properties application-prod.properties
+
+# Create prod properties file if it doesn't exist
+RUN echo "# Automatically generated production properties\n\
+# Database Configuration\n\
+spring.datasource.url=jdbc:postgresql://dpg-cvcklot2ng1s738vea30-a.oregon-postgres.render.com:5452/smart_shope\n\
+spring.datasource.username=smart_shope_user\n\
+spring.datasource.password=5NRBpEElN781d2U22J1lMUocKVukqBm3\n\
+spring.datasource.driver-class-name=org.postgresql.Driver\n\
+\n\
+# JPA/Hibernate Configuration\n\
+spring.jpa.hibernate.ddl-auto=update\n\
+spring.jpa.show-sql=false\n\
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect\n\
+spring.jpa.properties.hibernate.format_sql=false\n\
+\n\
+# Server Configuration\n\
+server.port=\${PORT:8080}\n\
+server.servlet.context-path=/api\n\
+\n\
+# JWT Configuration\n\
+jwt.expiration.ms=86400000\n\
+" > application-prod.properties
 
 # Create uploads directory
 RUN mkdir -p ./uploads
