@@ -6,6 +6,11 @@ services:
     plan: starter
     dockerfilePath: ./Dockerfile
     dockerContext: .
+    healthCheckPath: /api/health
+    numInstances: 1
+    scaling:
+      minInstances: 1
+      maxInstances: 1
     envVars:
       - key: DB_HOST
         value: dpg-cvcklot2ng1s738vea30-a.oregon-postgres.render.com
@@ -23,6 +28,8 @@ services:
         value: 8080
       - key: SPRING_CONFIG_USE_LEGACY_PROCESSING
         value: true
+      - key: JAVA_OPTS
+        value: "-Xms256m -Xmx512m"
 
 databases:
   - name: smart-shop-db
