@@ -21,6 +21,8 @@ services:
         generateValue: true
       - key: PORT
         value: 8080
+      - key: SPRING_CONFIG_USE_LEGACY_PROCESSING
+        value: true
 
 databases:
   - name: smart-shop-db
