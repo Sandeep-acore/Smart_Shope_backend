@@ -9,9 +9,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 COPY src/main/resources/application.properties application.properties
-
-# Install PostgreSQL client for potential debugging
-RUN apt-get update && apt-get install -y postgresql-client && apt-get clean
+COPY src/main/resources/application-prod.properties application-prod.properties
 
 # Create uploads directory
 RUN mkdir -p ./uploads
