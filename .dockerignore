@@ -1,0 +1,13 @@
+target/
+!target/*.jar
+logs/
+.mvn/
+.git/
+.github/
+.gitignore
+.DS_Store
+*.md
+docker-compose.yml
+uploads/
+.env
+.env.* 

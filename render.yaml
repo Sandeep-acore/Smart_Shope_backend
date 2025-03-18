@@ -1,0 +1,29 @@
+services:
+  # Backend API Service
+  - type: web
+    name: smart-shop-api
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: DB_HOST
+        value: dpg-cvcklot2ng1s738vea30-a.oregon-postgres.render.com
+      - key: DB_PORT
+        value: 5452
+      - key: DB_NAME
+        value: smart_shope
+      - key: DB_USERNAME
+        value: smart_shope_user
+      - key: DB_PASSWORD
+        value: 5NRBpEElN781d2U22J1lMUocKVukqBm3
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 8080
+
+databases:
+  - name: smart-shop-db
+    plan: starter
+    databaseName: smartshop
+    user: smartshop 
