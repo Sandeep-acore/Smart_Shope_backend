@@ -10,12 +10,12 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 COPY src/main/resources/application.properties application.properties
 
-# Create prod properties file if it doesn't exist
+# Create prod properties file with hardcoded values for Render deployment
 RUN echo "# Automatically generated production properties\n\
 # Database Configuration\n\
-spring.datasource.url=jdbc:postgresql://\${DB_HOST:localhost}:\${DB_PORT:5432}/\${DB_NAME:defaultdb}?sslmode=require\n\
-spring.datasource.username=\${DB_USERNAME:postgres}\n\
-spring.datasource.password=\${DB_PASSWORD:password}\n\
+spring.datasource.url=jdbc:postgresql://smartshop-sandeep-e8db.h.aivencloud.com:24114/defaultdb?sslmode=require\n\
+spring.datasource.username=avnadmin\n\
+spring.datasource.password=AVNS_ZhDZPpZQMeC6uyk9TnV\n\
 spring.datasource.driver-class-name=org.postgresql.Driver\n\
 \n\
 # Connection Pool Settings\n\
