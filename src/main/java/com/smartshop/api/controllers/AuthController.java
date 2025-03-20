@@ -409,11 +409,9 @@ public class AuthController {
             
             logger.info("Fetching profile for user: {}", email);
             
-            User user = userRepository.findByEmail(email)
+            // Use eager fetching with join to load roles
+            User user = userRepository.findByEmailWithRoles(email)
                     .orElseThrow(() -> new RuntimeException("User not found"));
-            
-            // Initialize the roles collection
-            user.getRoles().size(); // Force initialization of the roles collection
             
             UserProfileResponse profile = new UserProfileResponse();
             profile.setId(user.getId());
@@ -430,7 +428,7 @@ public class AuthController {
             profile.setCreatedAt(user.getCreatedAt());
             profile.setUpdatedAt(user.getUpdatedAt());
             
-            // Convert roles to strings
+            // Convert roles to strings - now safe since roles are eagerly loaded
             Set<String> roleStrings = user.getRoles().stream()
                     .map(role -> role.getName().name())
                     .collect(Collectors.toSet());
@@ -441,7 +439,7 @@ public class AuthController {
             logger.error("Error fetching user profile", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MessageResponse.error("Error fetching user profile"));
+                    .body(MessageResponse.error("Error fetching user profile: " + e.getMessage()));
         }
     }
 
