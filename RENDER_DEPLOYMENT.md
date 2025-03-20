@@ -1,72 +1,95 @@
 # Smart Shop API Deployment to Render
 
-This document explains how the Smart Shop API has been prepared for deployment to Render.
+This document provides instructions for deploying the Smart Shop API to Render.
 
-## Changes Made
+## Deployment Steps
 
-### 1. Enhanced Error Handling
+1. **Push your code to a Git repository** (GitHub, GitLab, or Bitbucket)
 
-- Added better validation messages for multipart form data
-- Added proper error responses for missing required fields
-- Updated the `GlobalExceptionHandler` to handle missing form fields and files
+2. **Set up a Render account**
+   - Sign up at https://render.com/ if you haven't already
 
-### 2. Production Configuration
+3. **Create a new Web Service**
+   - Click "New +" and select "Web Service"
+   - Connect to your Git repository
+   - Select the repository containing your Smart Shop API code
+   - Give your service a name (e.g., "smart-shop-api")
+   - Set the Environment to "Docker"
+   - Click "Create Web Service"
 
-- Updated `application-prod.properties` to use environment variables for database credentials
-- Set appropriate logging levels for production
-- Secured error responses by hiding stack traces
+4. **Configure Environment Variables**
+   - Under the "Environment" section, add the following environment variables:
+     ```
+     SPRING_PROFILES_ACTIVE=prod
+     PORT=10000
+     JDBC_DATABASE_URL=your_postgres_database_url
+     JDBC_DATABASE_USERNAME=your_database_username
+     JDBC_DATABASE_PASSWORD=your_database_password
+     JWT_SECRET=your_jwt_secret_or_leave_empty_for_auto_generation
+     ```
 
-### 3. Deployment Files
+5. **Configure Database**
+   - Either use Render's PostgreSQL service or connect to an external PostgreSQL database
+   - Make sure to update the `JDBC_DATABASE_*` environment variables accordingly
 
-- Created `Dockerfile` for containerization
-- Created `render.yaml` for Render Blueprint deployment
-- Added `build.sh` script for Render deployment process
+6. **Deploy the Service**
+   - Render will automatically deploy your service based on the configuration in your repository
+   - The deployment process includes building the application and running it according to the Dockerfile
 
-### 4. Improved Validation
+## Files for Render Deployment
 
-- Added field validation in `ProductController`
-- Added image type validation for uploads
-- Added proper error messages with field names
+The repository contains the following files required for Render deployment:
 
-## How to Deploy
+1. **Dockerfile**
+   - Defines how to build and run the application in a Docker container
 
-1. Push your code to GitHub
-2. Connect your Render account to GitHub
-3. Create a new Web Service in Render
-4. Select your repository
-5. Use these settings:
-   - Build Command: `./build.sh`
-   - Start Command: `java -jar app.jar`
-   - Environment: Docker
-   - Plan: Free (or choose a plan based on your needs)
+2. **render.yaml**
+   - Contains configuration for Render services
+   - Specifies build and start commands
+   - Defines environment variables
 
-6. Add the following environment variables:
-   - `SPRING_PROFILES_ACTIVE=prod`
-   - `PORT=8080`
-   - `JDBC_DATABASE_URL` (your PostgreSQL connection string)
-   - `JDBC_DATABASE_USERNAME` (your database username)
-   - `JDBC_DATABASE_PASSWORD` (your database password)
-   - `JWT_SECRET` (a secure random string)
+3. **system.properties**
+   - Specifies Java version requirements (Java 11)
 
-7. Click "Create Web Service"
+4. **application-prod.properties**
+   - Production configuration that uses environment variables
+   - Database connection settings
+   - Logging and error handling configuration
 
-## Testing in Postman
+## Monitoring and Troubleshooting
 
-When testing API endpoints in Postman, make sure to:
+1. **View Logs**
+   - In the Render dashboard, go to your web service
+   - Click on the "Logs" tab to view application logs
 
-1. For file uploads:
-   - Use form-data
-   - Set the type to "File" for image fields
-   - Include all required fields
+2. **Check Service Status**
+   - The "Events" tab shows deployment events and status
 
-2. For authentication:
-   - Include the JWT token in the Authorization header
-   - Format: `Bearer your_token_here`
-
-3. For validation errors:
-   - Check the response body for detailed error messages
-   - Look for the specific field that failed validation
+3. **Test Endpoints**
+   - Once deployed, your API will be available at:
+     `https://your-service-name.onrender.com/api`
+   - Swagger UI: `https://your-service-name.onrender.com/api/swagger-ui.html`
 
 ## Database Migration
 
-The application is configured to automatically update the database schema using Hibernate's `ddl-auto=update`. This means that the database schema will be created or updated when the application starts. 
+The application uses Hibernate's `ddl-auto=update` setting, which will automatically:
+1. Create the necessary tables if they don't exist
+2. Update the schema based on entity changes
+
+No manual database migration is needed for initial deployment.
+
+## Troubleshooting Common Issues
+
+1. **Application Fails to Start**
+   - Check logs for errors
+   - Verify environment variables are set correctly
+   - Ensure database connectivity
+
+2. **Database Connection Issues**
+   - Verify database credentials
+   - Check if the database server allows connections from Render IP addresses
+   - Test database connection using a separate client
+
+3. **Out of Memory Errors**
+   - Upgrade to a higher tier Render plan for more memory
+   - Optimize application memory usage in application-prod.properties 

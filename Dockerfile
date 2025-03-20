@@ -1,4 +1,4 @@
-FROM maven:3.8.5-openjdk-17-slim AS build
+FROM maven:3.8.6-openjdk-11-slim AS build
 WORKDIR /app
 
 # Copy the project files
@@ -8,15 +8,16 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM openjdk:17-slim
+FROM openjdk:11-jre-slim
 WORKDIR /app
 
 # Copy the built JAR file
 COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/uploads /app/uploads
 
 # Create directory for uploads
-RUN mkdir -p uploads
-RUN mkdir -p logs
+RUN mkdir -p /app/uploads
+RUN mkdir -p /app/logs
 
 # Set environment variables
 ENV SPRING_PROFILES_ACTIVE=prod
@@ -25,4 +26,4 @@ ENV SPRING_PROFILES_ACTIVE=prod
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"] 
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"] 
