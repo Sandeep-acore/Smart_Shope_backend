@@ -43,6 +43,8 @@ server.port=\${PORT:8080}\n\
 server.servlet.context-path=/api\n\
 \n\
 # JWT Configuration\n\
+jwt.secret=9CK3eMF4MZ2nhiGtJ9VJgMTJ2QuK2ZJY\n\
+jwt.expiration=86400000\n\
 jwt.expiration.ms=86400000\n\
 " > application-prod.properties
 
