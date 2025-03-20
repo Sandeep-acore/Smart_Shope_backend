@@ -13,9 +13,9 @@ COPY src/main/resources/application.properties application.properties
 # Create prod properties file if it doesn't exist
 RUN echo "# Automatically generated production properties\n\
 # Database Configuration\n\
-spring.datasource.url=jdbc:postgresql://dpg-cvcklot2ng1s738vea30-a.oregon-postgres.render.com:5452/smart_shope?sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory\n\
-spring.datasource.username=smart_shope_user\n\
-spring.datasource.password=5NRBpEElN781d2U22J1lMUocKVukqBm3\n\
+spring.datasource.url=jdbc:postgresql://smartshop-sandeep-e8db.h.aivencloud.com:24114/defaultdb?sslmode=require\n\
+spring.datasource.username=avnadmin\n\
+spring.datasource.password=AVNS_ZhDZPpZQMeC6uyk9TnV\n\
 spring.datasource.driver-class-name=org.postgresql.Driver\n\
 \n\
 # Connection Pool Settings\n\

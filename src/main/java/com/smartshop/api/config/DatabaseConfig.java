@@ -36,7 +36,7 @@ public class DatabaseConfig {
         dataSource.setConnectionTestQuery("SELECT 1");
         dataSource.setValidationTimeout(10000);
         
-        // Advanced PostgreSQL connection properties
+        // Advanced PostgreSQL connection properties for Aiven
         Properties dsProps = new Properties();
         dsProps.setProperty("socketTimeout", "30");
         dsProps.setProperty("connectTimeout", "30");
@@ -44,6 +44,10 @@ public class DatabaseConfig {
         dsProps.setProperty("tcpKeepAlive", "true");
         dsProps.setProperty("ApplicationName", "SmartShop");
         dsProps.setProperty("reWriteBatchedInserts", "true");
+        
+        // Specific properties for Aiven PostgreSQL 16.8
+        dsProps.setProperty("sslmode", "require");
+        
         dataSource.setDataSourceProperties(dsProps);
         
         return dataSource;

@@ -13,15 +13,15 @@ services:
       maxInstances: 1
     envVars:
       - key: DB_HOST
-        value: dpg-cvcklot2ng1s738vea30-a.oregon-postgres.render.com
+        value: smartshop-sandeep-e8db.h.aivencloud.com
       - key: DB_PORT
-        value: 5452
+        value: 24114
       - key: DB_NAME
-        value: smart_shope
+        value: defaultdb
       - key: DB_USERNAME
-        value: smart_shope_user
+        value: avnadmin
       - key: DB_PASSWORD
-        value: 5NRBpEElN781d2U22J1lMUocKVukqBm3
+        value: AVNS_ZhDZPpZQMeC6uyk9TnV
       - key: JWT_SECRET
         generateValue: true
       - key: PORT
