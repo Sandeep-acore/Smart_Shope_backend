@@ -13,15 +13,15 @@ services:
       maxInstances: 1
     envVars:
       - key: DB_HOST
-        value: ${AIVEN_DB_HOST}
+        value: smartshop-sandeep-e8db.h.aivencloud.com
       - key: DB_PORT
-        value: ${AIVEN_DB_PORT}
+        value: 24114
       - key: DB_NAME
-        value: ${AIVEN_DB_NAME}
+        value: defaultdb
       - key: DB_USERNAME
-        value: ${AIVEN_DB_USERNAME}
+        value: avnadmin
       - key: DB_PASSWORD
-        value: ${AIVEN_DB_PASSWORD}
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: PORT
