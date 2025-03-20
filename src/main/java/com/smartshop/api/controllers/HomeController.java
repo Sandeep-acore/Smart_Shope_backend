@@ -30,6 +30,14 @@ public class HomeController {
         response.put("message", "Welcome to Smart Shop API");
         response.put("status", "running");
         response.put("version", "1.0.0");
+        response.put("endpoints", new HashMap<String, String>() {{
+            put("health", "/api/health");
+            put("auth", "/api/auth");
+            put("products", "/api/products");
+            put("categories", "/api/categories");
+            put("cart", "/api/cart");
+            put("orders", "/api/orders");
+        }});
         return ResponseEntity.ok(response);
     }
 
@@ -41,16 +49,20 @@ public class HomeController {
     public ResponseEntity<Map<String, Object>> health() {
         Map<String, Object> health = new HashMap<>();
         health.put("status", "UP");
+        health.put("timestamp", System.currentTimeMillis());
         
         // Test database connection
         try {
             String dbStatus = jdbcTemplate.queryForObject("SELECT 'connected' AS status", String.class);
             health.put("database", dbStatus);
+            
+            // Get database version
+            String dbVersion = jdbcTemplate.queryForObject("SELECT version()", String.class);
+            health.put("databaseVersion", dbVersion);
         } catch (Exception e) {
             health.put("database", "error: " + e.getMessage());
         }
         
-        health.put("timestamp", System.currentTimeMillis());
         return ResponseEntity.ok(health);
     }
     
