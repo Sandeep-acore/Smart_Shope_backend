@@ -404,48 +404,43 @@ public class AuthController {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            logger.info("Fetching profile for user: {}", userDetails.getEmail());
-
-            Optional<User> userOptional = userRepository.findById(userDetails.getId());
-            if (!userOptional.isPresent()) {
-                logger.error("User profile not found for ID: {}", userDetails.getId());
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body(MessageResponse.error("Error: User not found"));
-            }
+            String email = userDetails.getEmail();
             
-            User user = userOptional.get();
-            logger.debug("User profile found: {}", user.getEmail());
+            logger.info("Fetching profile for user: {}", email);
             
-            // Create a map with user details (excluding sensitive information)
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", user.getId());
-            response.put("name", user.getName());
-            response.put("email", user.getEmail());
-            response.put("phone", user.getPhone());
-            response.put("profileImage", user.getProfileImage());
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
             
-            // Add address information
-            Map<String, Object> address = new HashMap<>();
-            address.put("addressLine1", user.getAddressLine1());
-            address.put("addressLine2", user.getAddressLine2());
-            address.put("city", user.getCity());
-            address.put("state", user.getState());
-            address.put("postalCode", user.getPostalCode());
-            address.put("country", user.getCountry());
-            response.put("address", address);
+            // Initialize the roles collection
+            user.getRoles().size(); // Force initialization of the roles collection
             
-            response.put("roles", user.getRoles().stream()
+            UserProfileResponse profile = new UserProfileResponse();
+            profile.setId(user.getId());
+            profile.setName(user.getName());
+            profile.setEmail(user.getEmail());
+            profile.setPhone(user.getPhone());
+            profile.setProfileImage(user.getProfileImage());
+            profile.setAddressLine1(user.getAddressLine1());
+            profile.setAddressLine2(user.getAddressLine2());
+            profile.setCity(user.getCity());
+            profile.setState(user.getState());
+            profile.setPostalCode(user.getPostalCode());
+            profile.setCountry(user.getCountry());
+            profile.setCreatedAt(user.getCreatedAt());
+            profile.setUpdatedAt(user.getUpdatedAt());
+            
+            // Convert roles to strings
+            Set<String> roleStrings = user.getRoles().stream()
                     .map(role -> role.getName().name())
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toSet());
+            profile.setRoles(roleStrings);
             
-            logger.debug("Returning user profile with address: {}", address);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(profile);
         } catch (Exception e) {
             logger.error("Error fetching user profile", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MessageResponse.error("Error: An unexpected error occurred"));
+                    .body(MessageResponse.error("Error fetching user profile"));
         }
     }
 
