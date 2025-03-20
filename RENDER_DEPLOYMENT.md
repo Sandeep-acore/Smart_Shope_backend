@@ -22,18 +22,15 @@ This document provides instructions for deploying the Smart Shop API to Render.
      ```
      SPRING_PROFILES_ACTIVE=prod
      PORT=10000
-     DATABASE_URL=your_postgres_database_url
-     POSTGRES_USER=your_database_username
-     POSTGRES_PASSWORD=your_database_password
+     AIVEN_DB_HOST=smartshop-sandeep-e8db.h.aivencloud.com
+     AIVEN_DB_PORT=24114
+     AIVEN_DB_NAME=defaultdb
+     AIVEN_DB_USERNAME=avnadmin
+     AIVEN_DB_PASSWORD=AVNS_ZhDZPpZQMeC6uyk9TnV
      JWT_SECRET=your_jwt_secret_or_leave_empty_for_auto_generation
      ```
 
-5. **Configure Database**
-   - Either use Render's PostgreSQL service or connect to an external PostgreSQL database
-   - Make sure to update the database environment variables accordingly
-   - For Render PostgreSQL, the connection format is typically: `jdbc:postgresql://host:port/database_name`
-
-6. **Deploy the Service**
+5. **Deploy the Service**
    - Render will automatically deploy your service based on the configuration in your repository
    - The deployment process includes building the application and running it according to the Dockerfile
 
@@ -54,7 +51,7 @@ The repository contains the following files required for Render deployment:
 
 4. **application-prod.properties**
    - Production configuration that uses environment variables
-   - Database connection settings
+   - Database connection settings specifically for Aiven PostgreSQL
    - Logging and error handling configuration
 
 ## Monitoring and Troubleshooting
@@ -87,11 +84,10 @@ No manual database migration is needed for initial deployment.
    - Ensure database connectivity
 
 2. **Database Connection Issues**
-   - Verify database credentials
-   - Check if the database server allows connections from Render IP addresses
-   - Test database connection using a separate client
-   - For Render PostgreSQL, ensure the DATABASE_URL includes the full JDBC URL format:
-     `jdbc:postgresql://host:port/database_name`
+   - Verify Aiven database credentials
+   - Check if your Aiven PostgreSQL allows connections from Render IP addresses
+   - Ensure proper SSL settings are configured (sslmode=require)
+   - The URL format should be: `jdbc:postgresql://hostname:port/database?sslmode=require`
 
 3. **Out of Memory Errors**
    - Upgrade to a higher tier Render plan for more memory

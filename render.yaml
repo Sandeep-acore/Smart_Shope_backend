@@ -10,11 +10,15 @@ services:
         value: prod
       - key: PORT
         value: 10000
-      - key: DATABASE_URL
+      - key: AIVEN_DB_HOST
         sync: false
-      - key: POSTGRES_USER
+      - key: AIVEN_DB_PORT
         sync: false
-      - key: POSTGRES_PASSWORD
+      - key: AIVEN_DB_NAME
+        sync: false
+      - key: AIVEN_DB_USERNAME
+        sync: false
+      - key: AIVEN_DB_PASSWORD
         sync: false
       - key: JWT_SECRET
         generateValue: true
