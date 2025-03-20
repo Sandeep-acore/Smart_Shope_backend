@@ -46,6 +46,24 @@ server.servlet.context-path=/api\n\
 jwt.secret=9CK3eMF4MZ2nhiGtJ9VJgMTJ2QuK2ZJY\n\
 jwt.expiration=86400000\n\
 jwt.expiration.ms=86400000\n\
+\n\
+# Debug and Logging Configuration\n\
+debug=true\n\
+logging.level.root=INFO\n\
+logging.level.org.springframework=DEBUG\n\
+logging.level.com.smartshop.api=DEBUG\n\
+logging.level.org.hibernate=INFO\n\
+\n\
+# File Upload Configuration\n\
+spring.servlet.multipart.max-file-size=10MB\n\
+spring.servlet.multipart.max-request-size=10MB\n\
+file.upload-dir=./uploads\n\
+\n\
+# Error Handling\n\
+server.error.include-message=always\n\
+server.error.include-binding-errors=always\n\
+server.error.include-stacktrace=always\n\
+server.error.include-exception=true\n\
 " > application-prod.properties
 
 # Create uploads directory
@@ -54,5 +72,5 @@ RUN mkdir -p ./uploads
 # Expose the port the app runs on
 EXPOSE 8080
 
-# Run the application with production profile and extra memory/GC options
-ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-jar", "-Dspring.profiles.active=prod", "app.jar"] 
+# Run the application with production profile, debug mode, and extra memory/GC options
+ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-jar", "-Dspring.profiles.active=prod", "-Ddebug=true", "app.jar"] 
