@@ -20,10 +20,50 @@ A comprehensive e-commerce backend API built with Spring Boot, featuring authent
 
 - **Framework**: Spring Boot 2.7.x
 - **Build Tool**: Maven
-- **Database**: H2 (Development), MySQL (Production)
+- **Database**: PostgreSQL
 - **Security**: Spring Security, JWT
 - **Documentation**: OpenAPI/Swagger
 - **Testing**: JUnit, Mockito
+- **Deployment**: Docker, Render
+
+## Accessing the API
+
+### Deployed API
+
+The API is deployed on Render and can be accessed at:
+- Base URL: `https://smart-shope-backend.onrender.com/api`
+- Swagger UI: `https://smart-shope-backend.onrender.com/api/swagger-ui.html`
+- Health Check: `https://smart-shope-backend.onrender.com/api/health`
+
+### Key Endpoints
+
+- **Authentication**:
+  - Register: `POST /api/auth/register`
+  - Login: `POST /api/auth/login`
+  - Reset Password: `POST /api/auth/reset-password`
+
+- **Products**:
+  - List Products: `GET /api/products`
+  - Get Product: `GET /api/products/{id}`
+  - Add Product (Admin): `POST /api/products`
+  - Update Product (Admin): `PUT /api/products/{id}`
+
+- **Categories**:
+  - List Categories: `GET /api/categories`
+  - Get Category: `GET /api/categories/{id}`
+  - Add Category (Admin): `POST /api/categories`
+
+- **Cart**:
+  - View Cart: `GET /api/cart`
+  - Add to Cart: `POST /api/cart/add`
+  - Update Cart Item: `PUT /api/cart/update`
+  - Remove from Cart: `DELETE /api/cart/remove/{id}`
+
+- **Orders**:
+  - Place Order: `POST /api/orders`
+  - View Orders: `GET /api/orders`
+  - Get Order Details: `GET /api/orders/{id}`
+  - Update Order Status (Admin): `PUT /api/orders/{id}/status`
 
 ## Getting Started
 
@@ -31,7 +71,7 @@ A comprehensive e-commerce backend API built with Spring Boot, featuring authent
 
 - Java 11 or higher
 - Maven 3.6.x or higher
-- MySQL (for production)
+- PostgreSQL (for production)
 
 ### Setup & Installation
 
@@ -56,18 +96,23 @@ A comprehensive e-commerce backend API built with Spring Boot, featuring authent
    ```
 
 5. Access the API:
-   - Base URL: `http://localhost:8080/api`
-   - Swagger UI: `http://localhost:8080/api/swagger-ui.html`
-   - H2 Console (dev only): `http://localhost:8080/api/h2-console`
+   - Base URL: `http://localhost:10000/api`
+   - Swagger UI: `http://localhost:10000/api/swagger-ui.html`
+   - Health check: `http://localhost:10000/api/health`
 
 ## API Documentation
 
 The API is documented using OpenAPI/Swagger. After starting the application, you can access the documentation at:
-`http://localhost:8080/api/swagger-ui.html`
+`http://localhost:10000/api/swagger-ui.html`
+
+When deployed:
+`https://smart-shope-backend.onrender.com/api/swagger-ui.html`
 
 ## Testing with Postman
 
 A Postman collection is available in the `postman` directory. Import this collection to test all API endpoints.
+
+**Important**: When using the Postman collection, ensure all endpoint URLs include the `/api` prefix.
 
 ### Testing Blocks
 

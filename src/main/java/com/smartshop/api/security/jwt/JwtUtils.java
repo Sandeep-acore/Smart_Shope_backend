@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -22,14 +24,24 @@ public class JwtUtils {
 
     @Value("${jwt.expiration.ms}")
     private int jwtExpirationMs;
-
-    private SecretKey getSigningKey() {
-        // Generate a secure key for HS512 with proper length
-        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+    
+    private SecretKey signingKey;
+    
+    @PostConstruct
+    public void init() {
+        // Create a secure key once during initialization
+        if (jwtSecret.length() < 64) {
+            // If the provided secret is too short, strengthen it
+            String encodedSecret = Base64.getEncoder().encodeToString(jwtSecret.getBytes());
+            // Repeat the secret to make it longer if needed
+            while (encodedSecret.length() < 64) {
+                encodedSecret = encodedSecret + encodedSecret;
+            }
+            jwtSecret = encodedSecret.substring(0, 64);
+        }
         
-        // If using a custom secret, ensure it's secure enough by using Keys utility
-        // This ensures proper key length for HS512
-        return Keys.hmacShaKeyFor(Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded());
+        // Create the signing key that will be used for all operations
+        signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateJwtToken(Authentication authentication) {
@@ -39,13 +51,13 @@ public class JwtUtils {
                 .setSubject((userPrincipal.getEmail()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .signWith(signingKey, SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public String getEmailFromJwtToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(signingKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
@@ -55,7 +67,7 @@ public class JwtUtils {
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
+                    .setSigningKey(signingKey)
                     .build()
                     .parseClaimsJws(authToken);
             return true;
