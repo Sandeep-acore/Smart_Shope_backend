@@ -22,15 +22,16 @@ This document provides instructions for deploying the Smart Shop API to Render.
      ```
      SPRING_PROFILES_ACTIVE=prod
      PORT=10000
-     JDBC_DATABASE_URL=your_postgres_database_url
-     JDBC_DATABASE_USERNAME=your_database_username
-     JDBC_DATABASE_PASSWORD=your_database_password
+     DATABASE_URL=your_postgres_database_url
+     POSTGRES_USER=your_database_username
+     POSTGRES_PASSWORD=your_database_password
      JWT_SECRET=your_jwt_secret_or_leave_empty_for_auto_generation
      ```
 
 5. **Configure Database**
    - Either use Render's PostgreSQL service or connect to an external PostgreSQL database
-   - Make sure to update the `JDBC_DATABASE_*` environment variables accordingly
+   - Make sure to update the database environment variables accordingly
+   - For Render PostgreSQL, the connection format is typically: `jdbc:postgresql://host:port/database_name`
 
 6. **Deploy the Service**
    - Render will automatically deploy your service based on the configuration in your repository
@@ -89,6 +90,8 @@ No manual database migration is needed for initial deployment.
    - Verify database credentials
    - Check if the database server allows connections from Render IP addresses
    - Test database connection using a separate client
+   - For Render PostgreSQL, ensure the DATABASE_URL includes the full JDBC URL format:
+     `jdbc:postgresql://host:port/database_name`
 
 3. **Out of Memory Errors**
    - Upgrade to a higher tier Render plan for more memory

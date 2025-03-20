@@ -45,8 +45,8 @@ public class DatabaseConfig {
         dsProps.setProperty("ApplicationName", "SmartShop");
         dsProps.setProperty("reWriteBatchedInserts", "true");
         
-        // Specific properties for Aiven PostgreSQL 16.8
-        dsProps.setProperty("sslmode", "require");
+        // Specific properties for PostgreSQL connection
+        dsProps.setProperty("sslmode", "prefer");
         
         dataSource.setDataSourceProperties(dsProps);
         

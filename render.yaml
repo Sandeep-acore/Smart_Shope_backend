@@ -10,11 +10,11 @@ services:
         value: prod
       - key: PORT
         value: 10000
-      - key: JDBC_DATABASE_URL
+      - key: DATABASE_URL
         sync: false
-      - key: JDBC_DATABASE_USERNAME
+      - key: POSTGRES_USER
         sync: false
-      - key: JDBC_DATABASE_PASSWORD
+      - key: POSTGRES_PASSWORD
         sync: false
       - key: JWT_SECRET
         generateValue: true
