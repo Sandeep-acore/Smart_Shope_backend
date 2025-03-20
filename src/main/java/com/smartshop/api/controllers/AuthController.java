@@ -10,6 +10,7 @@ import com.smartshop.api.payload.request.VerifyOtpRequest;
 import com.smartshop.api.payload.request.AddressUpdateRequest;
 import com.smartshop.api.payload.response.JwtResponse;
 import com.smartshop.api.payload.response.MessageResponse;
+import com.smartshop.api.payload.response.UserProfileResponse;
 import com.smartshop.api.repositories.RoleRepository;
 import com.smartshop.api.repositories.UserRepository;
 import com.smartshop.api.security.jwt.JwtUtils;

@@ -12,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
@@ -127,6 +129,32 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("status", "error");
         response.put("message", userFriendlyMessage);
+        
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
+    
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<?> handleMissingServletRequestPartException(MissingServletRequestPartException ex) {
+        logger.error("Missing request part: {}", ex.getMessage());
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "error");
+        response.put("message", "Required field missing: " + ex.getRequestPartName() + " is required");
+        
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
+    
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<?> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        logger.error("Missing request parameter: {}", ex.getMessage());
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "error");
+        response.put("message", "Required parameter missing: " + ex.getParameterName() + " is required");
         
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

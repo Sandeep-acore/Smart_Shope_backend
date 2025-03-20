@@ -35,6 +35,22 @@ The API is deployed on Render and can be accessed at:
 - Swagger UI: `https://smart-shope-backend.onrender.com/api/swagger-ui.html`
 - Health Check: `https://smart-shope-backend.onrender.com/api/health`
 
+### Running Locally
+
+You can run the application locally with the same database configuration as the production environment:
+
+#### Windows:
+1. Double-click the `run-local.bat` file
+2. The application will start on port 8080 with context path `/api`
+3. Access the application at: `http://localhost:8080/api`
+4. Swagger UI: `http://localhost:8080/api/swagger-ui.html`
+
+#### Linux/Mac:
+1. Make the script executable: `chmod +x run-local.sh`
+2. Run the script: `./run-local.sh`
+3. Access the application at: `http://localhost:8080/api`
+4. Swagger UI: `http://localhost:8080/api/swagger-ui.html`
+
 ### Key Endpoints
 
 - **Authentication**:
@@ -82,7 +98,7 @@ The API is deployed on Render and can be accessed at:
    ```
 
 2. Configure application properties:
-   - Update database credentials in `src/main/resources/application.properties`
+   - Update database credentials in `src/main/resources/application-local.properties`
    - Configure email settings for OTP functionality
 
 3. Build the project:
@@ -92,18 +108,22 @@ The API is deployed on Render and can be accessed at:
 
 4. Run the application:
    ```
-   mvn spring-boot:run
+   # Windows
+   run-local.bat
+   
+   # Linux/Mac
+   ./run-local.sh
    ```
 
 5. Access the API:
-   - Base URL: `http://localhost:10000/api`
-   - Swagger UI: `http://localhost:10000/api/swagger-ui.html`
-   - Health check: `http://localhost:10000/api/health`
+   - Base URL: `http://localhost:8080/api`
+   - Swagger UI: `http://localhost:8080/api/swagger-ui.html`
+   - Health check: `http://localhost:8080/api/health`
 
 ## API Documentation
 
 The API is documented using OpenAPI/Swagger. After starting the application, you can access the documentation at:
-`http://localhost:10000/api/swagger-ui.html`
+`http://localhost:8080/api/swagger-ui.html`
 
 When deployed:
 `https://smart-shope-backend.onrender.com/api/swagger-ui.html`
@@ -132,4 +152,55 @@ The API is developed in modular blocks, each independently testable:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Deploying to Render
+
+This application is configured for easy deployment to [Render](https://render.com/).
+
+### Prerequisites
+
+1. A Render account
+2. Git repository with your Smart Shop code
+
+### Deployment Steps
+
+1. Fork or clone this repository to your GitHub account
+2. Update the repository URL in `render.yaml` to point to your repository
+3. Log in to your Render account
+4. Click on "New" and select "Blueprint"
+5. Connect your GitHub account and select the Smart Shop repository
+6. Click "Apply Blueprint"
+7. Render will automatically set up the web service and database
+
+### Environment Variables
+
+The following environment variables are configured in the `render.yaml` file:
+
+- `PORT`: The port on which the application runs
+- `SPRING_PROFILES_ACTIVE`: Set to `prod` for production
+- `JDBC_DATABASE_URL`: PostgreSQL database URL (automatically set by Render)
+- `JDBC_DATABASE_USERNAME`: Database username (automatically set by Render)
+- `JDBC_DATABASE_PASSWORD`: Database password (automatically set by Render)
+- `JWT_SECRET`: Automatically generated secret for JWT tokens
+- `TZ`: Timezone set to Asia/Kolkata
+
+### Accessing the API
+
+Once deployed, your API will be available at:
+
+```
+https://your-service-name.onrender.com/api
+```
+
+The Swagger UI documentation will be available at:
+
+```
+https://your-service-name.onrender.com/api/swagger-ui.html
+```
+
+### Database Migration
+
+The application is configured to automatically update the database schema using Hibernate's `ddl-auto=update`. This means that the database schema will be created or updated when the application starts.
+
+For more information, visit [Render's documentation](https://render.com/docs). 

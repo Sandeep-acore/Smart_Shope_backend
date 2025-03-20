@@ -3,24 +3,33 @@ services:
   - type: web
     name: smart-shop-api
     env: docker
-    plan: starter
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-    healthCheckPath: /api/health
-    numInstances: 1
-    scaling:
-      minInstances: 1
-      maxInstances: 1
+    repo: https://github.com/your-username/smart-shop.git
+    buildCommand: docker build -t smart-shop-api .
+    startCommand: docker run -p $PORT:8080 smart-shop-api
     envVars:
       - key: PORT
-        value: 10000
+        value: 8080
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: JAVA_OPTS
-        value: "-Xms256m -Xmx512m"
+      - key: JDBC_DATABASE_URL
+        fromDatabase:
+          name: smart-shop-db
+          property: connectionString
+      - key: JDBC_DATABASE_USERNAME
+        fromDatabase:
+          name: smart-shop-db
+          property: user
+      - key: JDBC_DATABASE_PASSWORD
+        fromDatabase:
+          name: smart-shop-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TZ
+        value: Asia/Kolkata
 
 databases:
   - name: smart-shop-db
-    plan: starter
-    databaseName: smartshop
-    user: smartshop 
+    plan: free
+    databaseName: smart_shop
+    ipAllowList: [] 

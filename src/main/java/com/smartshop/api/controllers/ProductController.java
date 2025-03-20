@@ -54,20 +54,50 @@ public class ProductController {
             @RequestParam("categoryId") Long categoryId,
             @RequestParam(value = "image", required = false) MultipartFile image) {
 
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
+        try {
+            // Validate required fields
+            if (name == null || name.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Product name is required"));
+            }
+            
+            if (description == null || description.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Product description is required"));
+            }
+            
+            if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Product price must be a positive number"));
+            }
+            
+            if (stockQuantity == null || stockQuantity < 0) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Stock quantity must be a non-negative integer"));
+            }
+            
+            // Find category or throw appropriate error
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
 
-        Product product = new Product(name, description, price, stockQuantity, category);
+            Product product = new Product(name, description, price, stockQuantity, category);
 
-        // Handle image upload
-        if (image != null && !image.isEmpty()) {
-            String imageUrl = fileStorageService.storeFile(image, "products");
-            product.setImageUrl(imageUrl);
+            // Handle image upload
+            if (image != null && !image.isEmpty()) {
+                // Check image type
+                String contentType = image.getContentType();
+                if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
+                    return ResponseEntity.badRequest().body(new MessageResponse("Error: Only JPEG, JPG and PNG images are supported"));
+                }
+                
+                String imageUrl = fileStorageService.storeFile(image, "products");
+                product.setImageUrl(imageUrl);
+            }
+
+            productRepository.save(product);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(product);
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Error: " + e.getMessage()));
         }
-
-        productRepository.save(product);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
     @PutMapping("/{id}")
@@ -83,8 +113,30 @@ public class ProductController {
             @RequestParam(value = "image", required = false) MultipartFile image) {
         
         try {
+            // Find product or throw appropriate error
             Product product = productRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
+
+            // Validate required fields
+            if (name == null || name.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Product name is required"));
+            }
+            
+            if (description == null || description.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Product description is required"));
+            }
+            
+            if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Product price must be a positive number"));
+            }
+            
+            if (stockQuantity == null || stockQuantity < 0) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Stock quantity must be a non-negative integer"));
+            }
+            
+            if (discountPercentage < 0 || discountPercentage > 100) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Discount percentage must be between 0 and 100"));
+            }
 
             product.setName(name);
             product.setDescription(description);
@@ -104,7 +156,7 @@ public class ProductController {
                 // Check file type
                 String contentType = image.getContentType();
                 if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
-                    return ResponseEntity.badRequest().body(new MessageResponse("Error: Only JPEG, JPG and PNG images are supported."));
+                    return ResponseEntity.badRequest().body(new MessageResponse("Error: Only JPEG, JPG and PNG images are supported"));
                 }
                 
                 // Delete old image if exists

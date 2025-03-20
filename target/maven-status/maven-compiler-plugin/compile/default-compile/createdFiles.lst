@@ -45,12 +45,14 @@ com\smartshop\api\controllers\CartController.class
 com\smartshop\api\SmartShopApplication.class
 com\smartshop\api\services\EmailService.class
 com\smartshop\api\payload\request\OrderStatusRequest.class
+com\smartshop\api\controllers\HomeController$1.class
 com\smartshop\api\controllers\FileController$OfferImageDTO.class
 com\smartshop\api\models\OrderStatus.class
 com\smartshop\api\repositories\CartItemRepository.class
 com\smartshop\api\payload\response\OrderDTO.class
 com\smartshop\api\payload\request\AddressRequest.class
 com\smartshop\api\payload\request\CartItemRequest.class
+com\smartshop\api\payload\response\UserProfileResponse.class
 com\smartshop\api\models\Order.class
 com\smartshop\api\payload\request\LoginRequest.class
 com\smartshop\api\payload\request\SimplifiedOrderRequest.class
