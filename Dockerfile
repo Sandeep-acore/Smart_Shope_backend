@@ -13,7 +13,6 @@ WORKDIR /app
 
 # Copy the built JAR file
 COPY --from=build /app/target/*.jar app.jar
-COPY --from=build /app/uploads /app/uploads
 
 # Create directory for uploads
 RUN mkdir -p /app/uploads
