@@ -44,7 +44,7 @@ spring.jpa.properties.hibernate.transaction.jta.platform=org.hibernate.engine.tr
 spring.transaction.default-timeout=180\n\
 \n\
 # Server Configuration\n\
-server.port=\${PORT:8080}\n\
+server.port=${PORT:10000}\n\
 server.servlet.context-path=/api\n\
 \n\
 # JWT Configuration\n\
@@ -84,4 +84,4 @@ RUN mkdir -p ./uploads
 EXPOSE 8080
 
 # Run the application with production profile and appropriate memory settings
-ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-jar", "-Dspring.profiles.active=prod", "app.jar"] 
+ENTRYPOINT ["java", "-Xms256m", "-Xmx512m", "-Dserver.port=${PORT:10000}", "-Dserver.servlet.context-path=/api", "-jar", "-Dspring.profiles.active=prod", "app.jar"] 
