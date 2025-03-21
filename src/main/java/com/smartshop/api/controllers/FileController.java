@@ -32,6 +32,41 @@ public class FileController {
     @Autowired
     private OfferRepository offerRepository;
 
+    @GetMapping("/{directory}/{fileName:.+}")
+    public ResponseEntity<Resource> getFileWithDirectory(
+            @PathVariable String directory,
+            @PathVariable String fileName,
+            HttpServletRequest request) {
+        try {
+            // Combine directory and filename
+            String fullPath = directory + "/" + fileName;
+            
+            // Load file as Resource
+            Resource resource = fileStorageService.loadFileAsResource(fullPath);
+            
+            // Try to determine file's content type
+            String contentType = null;
+            try {
+                contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+            } catch (IOException ex) {
+                logger.info("Could not determine file type.");
+            }
+            
+            // Fallback to the default content type if type could not be determined
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            logger.error("Error retrieving file: {}", directory + "/" + fileName, e);
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
     @GetMapping("/{fileName:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String fileName, HttpServletRequest request) {
         try {
