@@ -76,8 +76,7 @@ public class FileStorageService {
             // Create and save file data using constructor instead of setters
             FileData fileData = new FileData(
                 originalFilename,  // name
-                newFilename,       // fileName
-                contentType,       // fileType
+                contentType,       // type
                 filePath,          // filePath
                 fileBytes          // data
             );
