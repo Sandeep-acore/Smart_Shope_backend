@@ -51,7 +51,7 @@ public class FileController {
             
             // Get content type from database
             String contentType = fileDataRepository.findByFilePath(fullPath)
-                .map(fileData -> fileData.getFileType())
+                .map(fileData -> fileData.getType())
                 .orElse("application/octet-stream");
             
             return ResponseEntity.ok()
@@ -74,7 +74,7 @@ public class FileController {
             
             // Get content type from database
             String contentType = fileDataRepository.findByFilePath(fileName)
-                .map(fileData -> fileData.getFileType())
+                .map(fileData -> fileData.getType())
                 .orElse("application/octet-stream");
             
             return ResponseEntity.ok()

@@ -58,7 +58,7 @@ public class DataMigrationUtil implements CommandLineRunner {
                             String fileName = file.getName();
                             
                             // Check if file already exists in database
-                            if (!fileDataRepository.findByPath(filePath).isPresent()) {
+                            if (!fileDataRepository.findByFilePath(filePath).isPresent()) {
                                 try {
                                     String contentType = getContentType(fileName);
                                     byte[] data = Files.readAllBytes(file.toPath());

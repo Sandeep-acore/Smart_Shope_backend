@@ -52,7 +52,7 @@ public class DatabaseFileStorageService {
 
     public FileData getFile(String filePath) {
         logger.info("Retrieving file from database: {}", filePath);
-        FileData fileData = fileDataRepository.findByPath(filePath).orElse(null);
+        FileData fileData = fileDataRepository.findByFilePath(filePath).orElse(null);
         if (fileData == null) {
             logger.warn("File not found in database: {}", filePath);
         } else {
@@ -63,7 +63,7 @@ public class DatabaseFileStorageService {
 
     public boolean deleteFile(String filePath) {
         try {
-            FileData fileData = fileDataRepository.findByPath(filePath).orElse(null);
+            FileData fileData = fileDataRepository.findByFilePath(filePath).orElse(null);
             if (fileData != null) {
                 fileDataRepository.delete(fileData);
                 logger.info("File deleted from database: {}", filePath);

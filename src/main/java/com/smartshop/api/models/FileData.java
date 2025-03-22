@@ -22,17 +22,11 @@ public class FileData {
     @Column(name = "name", nullable = false)
     private String name;
     
-    @Column(name = "file_name")
-    private String fileName;
-    
-    @Column(name = "file_type")
-    private String fileType;
+    @Column(name = "type", nullable = false)
+    private String type;
     
     @Column(name = "path", nullable = false)
     private String filePath;
-    
-    @Column(name = "type", nullable = false)
-    private String type;
     
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
@@ -43,24 +37,19 @@ public class FileData {
     @CreationTimestamp
     private LocalDateTime createdAt;
     
-    public FileData(String name, String fileName, String fileType, String filePath, byte[] data) {
+    /**
+     * Constructor for file storage - used by DatabaseFileStorageService and DataMigrationUtil
+     */
+    public FileData(String name, String type, String filePath, byte[] data) {
         this.name = name;
-        this.fileName = fileName;
-        this.fileType = fileType;
+        this.type = type;
         this.filePath = filePath;
-        this.type = determineFileType(fileType);
         this.data = data;
     }
     
-    public FileData(String fileName, String fileType, String filePath, byte[] data) {
-        this.name = fileName;
-        this.fileName = fileName;
-        this.fileType = fileType;
-        this.filePath = filePath;
-        this.type = determineFileType(fileType);
-        this.data = data;
-    }
-    
+    /**
+     * Utility method to determine file type from MIME type
+     */
     private String determineFileType(String mimeType) {
         if (mimeType == null) {
             return "unknown";
