@@ -11,18 +11,23 @@ RUN mvn clean package -DskipTests
 FROM openjdk:11-jre-slim
 WORKDIR /app
 
+# Install PostgreSQL client for potential troubleshooting
+RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+
 # Copy the built JAR file
 COPY --from=build /app/target/*.jar app.jar
 
-# Create directory for uploads
-RUN mkdir -p /app/uploads
-RUN mkdir -p /app/logs
+# Create necessary directories
+RUN mkdir -p /tmp/uploads
+RUN mkdir -p /var/log
 
 # Set environment variables
 ENV SPRING_PROFILES_ACTIVE=prod
+ENV PORT=10000
+ENV TZ=UTC
 
 # Expose the port
-EXPOSE 8080
+EXPOSE 10000
 
-# Run the application
+# Run the application with Render's environment variables
 ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"] 

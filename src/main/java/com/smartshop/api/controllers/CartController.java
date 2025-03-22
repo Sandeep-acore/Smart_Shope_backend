@@ -10,6 +10,7 @@ import com.smartshop.api.repositories.CartItemRepository;
 import com.smartshop.api.repositories.ProductRepository;
 import com.smartshop.api.repositories.UserRepository;
 import com.smartshop.api.security.services.UserDetailsImpl;
+import com.smartshop.api.services.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class CartController {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private FileStorageService fileStorageService;
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
@@ -50,7 +54,7 @@ public class CartController {
             List<CartItem> cartItems = cartItemRepository.findByUser(user);
             logger.debug("Found {} items in cart for user: {}", cartItems.size(), user.getEmail());
             
-            return ResponseEntity.ok(new CartResponse(cartItems));
+            return ResponseEntity.ok(new CartResponse(cartItems, fileStorageService));
         } catch (Exception e) {
             logger.error("Error fetching cart", e);
             throw e;
@@ -102,7 +106,7 @@ public class CartController {
             
             List<CartItem> cartItems = cartItemRepository.findByUser(user);
             logger.info("Item added to cart successfully for user: {}", user.getEmail());
-            return ResponseEntity.ok(new CartResponse(cartItems));
+            return ResponseEntity.ok(new CartResponse(cartItems, fileStorageService));
         } catch (Exception e) {
             logger.error("Error adding item to cart", e);
             throw e;
@@ -157,7 +161,7 @@ public class CartController {
             
             List<CartItem> cartItems = cartItemRepository.findByUser(user);
             logger.info("Cart item updated successfully for user: {}", user.getEmail());
-            return ResponseEntity.ok(new CartResponse(cartItems));
+            return ResponseEntity.ok(new CartResponse(cartItems, fileStorageService));
         } catch (Exception e) {
             logger.error("Error updating cart item", e);
             throw e;
@@ -190,7 +194,7 @@ public class CartController {
             
             List<CartItem> cartItems = cartItemRepository.findByUser(user);
             logger.info("Item removed from cart successfully for user: {}", user.getEmail());
-            return ResponseEntity.ok(new CartResponse(cartItems));
+            return ResponseEntity.ok(new CartResponse(cartItems, fileStorageService));
         } catch (Exception e) {
             logger.error("Error removing item from cart", e);
             throw e;

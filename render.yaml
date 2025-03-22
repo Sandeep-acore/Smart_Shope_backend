@@ -5,25 +5,28 @@ services:
     env: docker
     buildCommand: ./mvnw clean package -DskipTests
     startCommand: java -jar target/*.jar
+    healthCheckPath: /api/health
+    healthCheckTimeout: 60
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: PORT
         value: 10000
       - key: AIVEN_DB_HOST
-        sync: false
+        value: smartshop-sandeep-e8db.h.aivencloud.com
       - key: AIVEN_DB_PORT
-        sync: false
+        value: "24114"
       - key: AIVEN_DB_NAME
-        sync: false
+        value: defaultdb
       - key: AIVEN_DB_USERNAME
-        sync: false
+        value: avnadmin
       - key: AIVEN_DB_PASSWORD
-        sync: false
+        value: AVNS_ZhDZPpZQMeC6uyk9TnV
       - key: JWT_SECRET
         generateValue: true
 
 databases:
+  # This section is kept if you want to use Render's internal DB in the future
   - name: smart-shop-db
     plan: free
     databaseName: smart_shop

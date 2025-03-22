@@ -15,7 +15,8 @@ public class UserProfileResponse {
     private String name;
     private String email;
     private String phone;
-    private String profileImage;
+    private String imageRelativePath;
+    private String imageUrl;
     private String addressLine1;
     private String addressLine2;
     private String city;

@@ -1,8 +1,11 @@
 package com.smartshop.api.controllers;
 
 import com.smartshop.api.models.Category;
+import com.smartshop.api.models.Product;
+import com.smartshop.api.payload.response.CategoryResponse;
 import com.smartshop.api.payload.response.MessageResponse;
 import com.smartshop.api.repositories.CategoryRepository;
+import com.smartshop.api.repositories.ProductRepository;
 import com.smartshop.api.services.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -29,73 +34,74 @@ public class CategoryController {
     private CategoryRepository categoryRepository;
     
     @Autowired
+    private ProductRepository productRepository;
+    
+    @Autowired
     private FileStorageService fileStorageService;
 
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
-        return ResponseEntity.ok(categories);
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        
+        List<CategoryResponse> responses = categories.stream()
+            .map(category -> CategoryResponse.fromCategory(category, baseUrl))
+            .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
-        return ResponseEntity.ok(category);
+            
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        return ResponseEntity.ok(CategoryResponse.fromCategory(category, baseUrl));
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
     public ResponseEntity<?> createCategory(
             @RequestParam("name") String name,
-            @RequestParam("description") String description,
-            @RequestParam("image") MultipartFile image) {
-        
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
+
         try {
-            logger.info("Creating category with name: {}", name);
-            
+            // Validation
             if (name == null || name.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(MessageResponse.error("Category name is required"));
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Category name is required"));
             }
             
-            if (description == null || description.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(MessageResponse.error("Category description is required"));
-            }
-            
-            if (image == null || image.isEmpty()) {
-                return ResponseEntity.badRequest().body(MessageResponse.error("Category image is required"));
-            }
-            
+            // Check if category already exists
             if (categoryRepository.existsByName(name)) {
-                logger.warn("Category creation failed - Name already exists: {}", name);
-                return ResponseEntity
-                        .badRequest()
-                        .body(MessageResponse.error("Category name already exists!"));
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Category with this name already exists"));
             }
             
+            // Create new category
             Category category = new Category();
             category.setName(name);
             category.setDescription(description);
             
-            // Check file type
-            String contentType = image.getContentType();
-            if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
-                return ResponseEntity.badRequest().body(MessageResponse.error("Only JPEG, JPG and PNG images are supported."));
+            // Handle image upload
+            if (image != null && !image.isEmpty()) {
+                // Check file type
+                String contentType = image.getContentType();
+                if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
+                    return ResponseEntity.badRequest().body(new MessageResponse("Error: Only JPEG, JPG and PNG images are supported"));
+                }
+                
+                String imagePath = fileStorageService.storeFile(image, "categories");
+                category.setImagePath(imagePath);
             }
             
-            // Store image
-            String imagePath = fileStorageService.storeFile(image, "categories");
-            category.setImagePath(imagePath);
-            
             categoryRepository.save(category);
-            logger.info("Category created successfully: {}", name);
             
-            return ResponseEntity.status(HttpStatus.CREATED).body(category);
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            return ResponseEntity.status(HttpStatus.CREATED).body(CategoryResponse.fromCategory(category, baseUrl));
         } catch (Exception e) {
-            logger.error("Error creating category: {}", name, e);
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MessageResponse.error(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Error: " + e.getMessage()));
         }
     }
 

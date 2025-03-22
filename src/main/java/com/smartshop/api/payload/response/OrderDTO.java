@@ -34,10 +34,14 @@ public class OrderDTO {
     private LocalDateTime deliveredAt;
     
     public OrderDTO(Order order) {
+        this(order, null);
+    }
+    
+    public OrderDTO(Order order, String baseUrl) {
         this.id = order.getId();
         this.orderNumber = "ORD-" + String.format("%06d", order.getId());
         this.items = order.getItems().stream()
-                .map(this::convertToOrderItemDTO)
+                .map(item -> convertToOrderItemDTO(item, baseUrl))
                 .collect(Collectors.toList());
         this.shippingAddress = convertToAddressDTO(order.getShippingAddress());
         this.deliveryAddress = convertToAddressDTO(order.getDeliveryAddress());
@@ -53,11 +57,22 @@ public class OrderDTO {
     }
     
     private OrderItemDTO convertToOrderItemDTO(OrderItem orderItem) {
+        return convertToOrderItemDTO(orderItem, null);
+    }
+    
+    private OrderItemDTO convertToOrderItemDTO(OrderItem orderItem, String baseUrl) {
         OrderItemDTO dto = new OrderItemDTO();
         dto.setId(orderItem.getId());
         dto.setProductId(orderItem.getProduct().getId());
         dto.setProductName(orderItem.getProduct().getName());
-        dto.setProductImage(orderItem.getProduct().getImageUrl());
+        
+        // Set product image with full URL if baseUrl is provided
+        String imageUrl = orderItem.getProduct().getImageUrl();
+        if (baseUrl != null && imageUrl != null && !imageUrl.isEmpty() && !imageUrl.startsWith("http")) {
+            imageUrl = baseUrl + "/files/" + imageUrl;
+        }
+        dto.setProductImage(imageUrl);
+        
         dto.setPrice(orderItem.getPrice());
         dto.setQuantity(orderItem.getQuantity());
         dto.setTotalPrice(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));

@@ -32,6 +32,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -89,14 +90,21 @@ public class AuthController {
                     .collect(Collectors.toList());
 
             logger.info("User authenticated successfully: {}", loginRequest.getEmail());
-            return ResponseEntity.ok(new JwtResponse(
+            JwtResponse response = new JwtResponse(
                     jwt,
                     userDetails.getId(),
                     userDetails.getName(),
                     userDetails.getEmail(),
                     userDetails.getPhone(),
                     userDetails.getProfileImage(),
-                    roles));
+                    roles);
+            
+            // Handle profile image URL
+            if (userDetails.getProfileImage() != null && !userDetails.getProfileImage().isEmpty()) {
+                response.setImageUrl(fileStorageService.getFileUrl(userDetails.getProfileImage()));
+            }
+            
+            return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
             logger.error("Authentication failed for user: {}", loginRequest.getEmail(), e);
             return ResponseEntity
@@ -111,6 +119,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Transactional
     public ResponseEntity<?> registerUser(
             @RequestParam("name") String name,
             @RequestParam("email") String email,
@@ -133,6 +142,7 @@ public class AuthController {
 
             // Handle profile image if provided
             if (profileImage != null && !profileImage.isEmpty()) {
+                try {
                 // Check file type
                 String contentType = profileImage.getContentType();
                 if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
@@ -141,7 +151,17 @@ public class AuthController {
                 
                 // Store profile image
                 String profileImagePath = fileStorageService.storeFile(profileImage, "profiles");
+                    if (profileImagePath == null) {
+                        logger.error("Failed to store profile image for user: {}", email);
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(MessageResponse.error("Failed to upload profile image. Please try again."));
+                    }
                 user.setProfileImage(profileImagePath);
+                } catch (Exception e) {
+                    logger.error("Error handling profile image upload: {}", e.getMessage(), e);
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(MessageResponse.error("Error uploading profile image: " + e.getMessage()));
+                }
             }
 
             Set<Role> roles = new HashSet<>();
@@ -194,9 +214,31 @@ public class AuthController {
 
             user.setRoles(roles);
             logger.debug("Saving user with roles: {}", roles);
-            userRepository.save(user);
+            
+            try {
+                User savedUser = userRepository.save(user);
+                logger.info("User saved successfully with ID: {}", savedUser.getId());
+            } catch (Exception e) {
+                logger.error("Failed to save user to database: {}", e.getMessage(), e);
+                
+                // If we uploaded a profile image, try to delete it since the user wasn't saved
+                if (user.getProfileImage() != null) {
+                    try {
+                        boolean deleted = fileStorageService.deleteFile(user.getProfileImage());
+                        if (deleted) {
+                            logger.info("Successfully deleted profile image after user save failure");
+                        }
+                    } catch (Exception ex) {
+                        logger.error("Failed to delete profile image after user save failure: {}", ex.getMessage());
+                    }
+                }
+                
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(MessageResponse.error("Failed to register user. Please try again later."));
+            }
 
             // Authenticate the user and generate JWT token
+            try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password));
 
@@ -208,15 +250,27 @@ public class AuthController {
                     .map(item -> item.getAuthority())
                     .collect(Collectors.toList());
 
-            logger.info("User registered successfully: {}", email);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new JwtResponse(
+                logger.info("User registered and authenticated successfully: {}", email);
+                JwtResponse response = new JwtResponse(
                     jwt,
                     userDetails.getId(),
                     userDetails.getName(),
                     userDetails.getEmail(),
                     userDetails.getPhone(),
                     userDetails.getProfileImage(),
-                    userRoles));
+                        userRoles);
+                
+                // Handle profile image URL
+                if (userDetails.getProfileImage() != null && !userDetails.getProfileImage().isEmpty()) {
+                    response.setImageUrl(fileStorageService.getFileUrl(userDetails.getProfileImage()));
+                }
+                
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            } catch (Exception e) {
+                logger.error("User registered but authentication failed: {}", email, e);
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(MessageResponse.success("User registered successfully! Please log in."));
+            }
         } catch (Exception e) {
             logger.error("Error during user registration: {}", email, e);
             return ResponseEntity
@@ -310,14 +364,22 @@ public class AuthController {
                     .collect(Collectors.toList());
 
             logger.info("User registered successfully: {}", signUpRequest.getEmail());
-            return ResponseEntity.status(HttpStatus.CREATED).body(new JwtResponse(
+            
+            JwtResponse response = new JwtResponse(
                     jwt,
                     userDetails.getId(),
                     userDetails.getName(),
                     userDetails.getEmail(),
                     userDetails.getPhone(),
                     userDetails.getProfileImage(),
-                    userRoles));
+                    userRoles);
+            
+            // Handle profile image URL
+            if (userDetails.getProfileImage() != null && !userDetails.getProfileImage().isEmpty()) {
+                response.setImageUrl(fileStorageService.getFileUrl(userDetails.getProfileImage()));
+            }
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             logger.error("Error during user registration: {}", signUpRequest.getEmail(), e);
             return ResponseEntity
@@ -418,7 +480,13 @@ public class AuthController {
             profile.setName(user.getName());
             profile.setEmail(user.getEmail());
             profile.setPhone(user.getPhone());
-            profile.setProfileImage(user.getProfileImage());
+            profile.setImageRelativePath(user.getProfileImage());
+            
+            // Handle profile image URL
+            if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
+                profile.setImageUrl(fileStorageService.getFileUrl(user.getProfileImage()));
+            }
+            
             profile.setAddressLine1(user.getAddressLine1());
             profile.setAddressLine2(user.getAddressLine2());
             profile.setCity(user.getCity());
@@ -445,6 +513,7 @@ public class AuthController {
 
     @PutMapping("/update-profile")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('PRODUCT_MANAGER') or hasRole('DELIVERY_PARTNER')")
+    @Transactional
     public ResponseEntity<?> updateUserProfile(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String phone,
@@ -512,19 +581,47 @@ public class AuthController {
             }
             
             // Handle profile image upload
+            String profileImagePath = null;
+            String oldProfileImagePath = null;
             if (profileImage != null && !profileImage.isEmpty()) {
+                try {
                 logger.debug("Updating profile image for user: {}", user.getEmail());
-                // Delete old profile image if exists
-                if (user.getProfileImage() != null) {
-                    fileStorageService.deleteFile(user.getProfileImage());
-                }
+                    
+                    // Check file type
+                    String contentType = profileImage.getContentType();
+                    if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
+                        return ResponseEntity.badRequest().body(MessageResponse.error("Only JPEG, JPG and PNG images are supported."));
+                    }
+                    
+                    // Save old profile image path for deletion after successful update
+                    oldProfileImagePath = user.getProfileImage();
                 
                 // Store new profile image
-                String profileImagePath = fileStorageService.storeFile(profileImage, "profiles");
+                    profileImagePath = fileStorageService.storeFile(profileImage, "profiles");
+                    if (profileImagePath == null) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(MessageResponse.error("Failed to upload profile image. Please try again."));
+                    }
                 user.setProfileImage(profileImagePath);
+                } catch (Exception e) {
+                    logger.error("Error processing profile image: {}", e.getMessage(), e);
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(MessageResponse.error("Error processing profile image: " + e.getMessage()));
+                }
             }
             
+            try {
             userRepository.save(user);
+                
+                // Delete old profile image if it was replaced
+                if (oldProfileImagePath != null && profileImagePath != null) {
+                    try {
+                        fileStorageService.deleteFile(oldProfileImagePath);
+                    } catch (Exception ex) {
+                        logger.warn("Could not delete old profile image: {}", oldProfileImagePath, ex);
+                        // Continue since this isn't critical
+                    }
+                }
             
             // Create a response with the updated user profile
             Map<String, Object> response = new HashMap<>();
@@ -533,6 +630,11 @@ public class AuthController {
             response.put("email", user.getEmail());
             response.put("phone", user.getPhone());
             response.put("profileImage", user.getProfileImage());
+                
+                // Add full URL for profile image
+                if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
+                    response.put("imageUrl", fileStorageService.getFileUrl(user.getProfileImage()));
+                }
             
             // Add address information
             Map<String, Object> address = new HashMap<>();
@@ -551,11 +653,26 @@ public class AuthController {
             
             logger.info("Profile updated successfully for user: {}", user.getEmail());
             return ResponseEntity.ok(response);
+            } catch (Exception e) {
+                logger.error("Error saving user data: {}", e.getMessage(), e);
+                
+                // If we uploaded a new image but couldn't save the user, delete the new image
+                if (profileImagePath != null) {
+                    try {
+                        fileStorageService.deleteFile(profileImagePath);
+                    } catch (Exception ex) {
+                        logger.error("Failed to clean up profile image after user save failure: {}", ex.getMessage());
+                    }
+                }
+                
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(MessageResponse.error("Failed to update profile: " + e.getMessage()));
+            }
         } catch (Exception e) {
             logger.error("Error updating user profile", e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MessageResponse.error(e.getMessage()));
+                    .body(MessageResponse.error("Error updating user profile: " + e.getMessage()));
         }
     }
 
@@ -609,52 +726,103 @@ public class AuthController {
 
     @PostMapping("/upload-profile-image")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('PRODUCT_MANAGER') or hasRole('DELIVERY_PARTNER')")
-    public ResponseEntity<?> uploadProfileImage(@RequestParam("image") MultipartFile image) {
+    @Transactional
+    public ResponseEntity<?> uploadProfileImage(@RequestParam("profileImage") MultipartFile profileImage) {
         try {
+            // Get current user from security context
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            logger.info("Uploading profile image for user: {}", userDetails.getEmail());
+            Long userId = userDetails.getId();
             
-            Optional<User> userOptional = userRepository.findById(userDetails.getId());
-            if (!userOptional.isPresent()) {
-                logger.error("Profile image upload failed - User not found: {}", userDetails.getId());
-                return ResponseEntity.badRequest().body(MessageResponse.error("Error: User not found."));
-            }
+            logger.info("Processing profile image upload for user ID: {}", userId);
             
-            User user = userOptional.get();
-            
-            // Validate image
-            if (image.isEmpty()) {
-                return ResponseEntity.badRequest().body(MessageResponse.error("Error: Please select an image to upload."));
+            if (profileImage == null || profileImage.isEmpty()) {
+                logger.warn("No profile image provided for user ID: {}", userId);
+                return ResponseEntity.badRequest().body(MessageResponse.error("No profile image provided"));
             }
             
             // Check file type
-            String contentType = image.getContentType();
-            if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
-                return ResponseEntity.badRequest().body(MessageResponse.error("Error: Only JPEG, JPG and PNG images are supported."));
+            String contentType = profileImage.getContentType();
+            if (contentType == null) {
+                logger.warn("Invalid content type for profile image from user ID: {}", userId);
+                return ResponseEntity.badRequest().body(MessageResponse.error("Invalid file type. Content type is null."));
             }
             
-            // Delete old profile image if exists
-            if (user.getProfileImage() != null) {
-                fileStorageService.deleteFile(user.getProfileImage());
+            if (!(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
+                logger.warn("Unsupported content type for profile image: {} from user ID: {}", contentType, userId);
+                return ResponseEntity.badRequest().body(MessageResponse.error("Only JPEG, JPG and PNG images are supported."));
             }
             
-            // Store new profile image
-            String profileImagePath = fileStorageService.storeFile(image, "profiles");
+            logger.info("Profile image validated for user ID: {}, size: {}, content type: {}", userId, profileImage.getSize(), contentType);
+            
+            // Get user from database
+            Optional<User> userOptional = userRepository.findById(userId);
+            if (!userOptional.isPresent()) {
+                logger.error("User not found for ID: {} during profile image upload", userId);
+                return ResponseEntity.badRequest().body(MessageResponse.error("User not found"));
+            }
+            
+            User user = userOptional.get();
+            logger.info("Found user: {} for profile image upload", user.getEmail());
+            
+            // Store old profile image path for deletion after successful update
+            String oldProfileImagePath = user.getProfileImage();
+            logger.debug("Old profile image path: {}", oldProfileImagePath);
+            
+            try {
+                // Store profile image in a separate operation outside the main transaction
+                logger.info("Storing profile image for user: {}", user.getEmail());
+                String profileImagePath = fileStorageService.storeFile(profileImage, "profiles");
+                
+                if (profileImagePath == null) {
+                    logger.error("Failed to store profile image for user: {}", user.getEmail());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(MessageResponse.error("Failed to upload profile image. Please try again."));
+                }
+                
+                logger.info("Successfully stored profile image at path: {} for user: {}", profileImagePath, user.getEmail());
+                
+                // Update user with new profile image path
             user.setProfileImage(profileImagePath);
             userRepository.save(user);
-            
+                logger.info("Updated user profile with new image path for user: {}", user.getEmail());
+                
+                // Delete old profile image if it exists (after successful update)
+                if (oldProfileImagePath != null && !oldProfileImagePath.isEmpty()) {
+                    try {
+                        boolean deleted = fileStorageService.deleteFile(oldProfileImagePath);
+                        if (deleted) {
+                            logger.info("Successfully deleted old profile image: {}", oldProfileImagePath);
+                        } else {
+                            logger.warn("Failed to delete old profile image: {}", oldProfileImagePath);
+                        }
+                    } catch (Exception ex) {
+                        logger.warn("Error deleting old profile image: {}", oldProfileImagePath, ex);
+                        // Continue since this isn't critical
+                    }
+                }
+                
+                // Generate full URL for the profile image
+                String fileUrl = fileStorageService.getFileUrl(profileImagePath);
+                
+                // Return success response with profile image URL
             Map<String, Object> response = new HashMap<>();
             response.put("profileImage", profileImagePath);
+                response.put("imageUrl", fileUrl);
             response.put("message", "Profile image uploaded successfully");
             
-            logger.info("Profile image uploaded successfully for user: {}", user.getEmail());
+                logger.info("Profile image upload completed successfully for user: {}", user.getEmail());
             return ResponseEntity.ok(response);
+                
+            } catch (Exception e) {
+                logger.error("Error processing profile image for user: {}", user.getEmail(), e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(MessageResponse.error("Failed to upload profile image. Please try again."));
+            }
         } catch (Exception e) {
-            logger.error("Error uploading profile image", e);
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MessageResponse.error(e.getMessage()));
+            logger.error("Unexpected error uploading profile image", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(MessageResponse.error("An unexpected error occurred while uploading profile image."));
         }
     }
 

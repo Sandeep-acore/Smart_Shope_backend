@@ -1,6 +1,7 @@
 package com.smartshop.api.payload.response;
 
 import com.smartshop.api.models.CartItem;
+import com.smartshop.api.services.FileStorageService;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -13,7 +14,10 @@ public class CartResponse {
     private BigDecimal subtotal;
     private int itemCount;
     
-    public CartResponse(List<CartItem> cartItems) {
+    private final FileStorageService fileStorageService;
+    
+    public CartResponse(List<CartItem> cartItems, FileStorageService fileStorageService) {
+        this.fileStorageService = fileStorageService;
         this.items = cartItems.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -26,7 +30,20 @@ public class CartResponse {
         dto.setId(cartItem.getId());
         dto.setProductId(cartItem.getProduct().getId());
         dto.setProductName(cartItem.getProduct().getName());
-        dto.setProductImage(cartItem.getProduct().getImageUrl());
+        
+        // Set product image with both regular path and full URL
+        String imagePath = cartItem.getProduct().getImageUrl();
+        dto.setImageRelativePath(imagePath);
+        
+        // Add full URL for product image if it exists
+        if (imagePath != null && !imagePath.isEmpty()) {
+            if (imagePath.startsWith("http")) {
+                dto.setImageUrl(imagePath);
+            } else {
+                dto.setImageUrl(fileStorageService.getFileUrl(imagePath));
+            }
+        }
+        
         dto.setPrice(cartItem.getProduct().getPrice());
         dto.setDiscountedPrice(cartItem.getProduct().getDiscountedPrice());
         dto.setQuantity(cartItem.getQuantity());

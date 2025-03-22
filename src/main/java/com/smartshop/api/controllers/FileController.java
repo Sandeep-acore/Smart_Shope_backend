@@ -1,6 +1,7 @@
 package com.smartshop.api.controllers;
 
 import com.smartshop.api.models.Offer;
+import com.smartshop.api.repositories.FileDataRepository;
 import com.smartshop.api.repositories.OfferRepository;
 import com.smartshop.api.services.FileStorageService;
 import org.slf4j.Logger;
@@ -31,6 +32,9 @@ public class FileController {
     
     @Autowired
     private OfferRepository offerRepository;
+    
+    @Autowired
+    private FileDataRepository fileDataRepository;
 
     @GetMapping("/{directory}/{fileName:.+}")
     public ResponseEntity<Resource> getFileWithDirectory(
@@ -40,26 +44,19 @@ public class FileController {
         try {
             // Combine directory and filename
             String fullPath = directory + "/" + fileName;
+            logger.info("Retrieving file from path: {}", fullPath);
             
             // Load file as Resource
             Resource resource = fileStorageService.loadFileAsResource(fullPath);
             
-            // Try to determine file's content type
-            String contentType = null;
-            try {
-                contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-            } catch (IOException ex) {
-                logger.info("Could not determine file type.");
-            }
-            
-            // Fallback to the default content type if type could not be determined
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
+            // Get content type from database
+            String contentType = fileDataRepository.findByFilePath(fullPath)
+                .map(fileData -> fileData.getFileType())
+                .orElse("application/octet-stream");
             
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
                     .body(resource);
         } catch (Exception e) {
             logger.error("Error retrieving file: {}", directory + "/" + fileName, e);
@@ -70,25 +67,19 @@ public class FileController {
     @GetMapping("/{fileName:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String fileName, HttpServletRequest request) {
         try {
+            logger.info("Retrieving file: {}", fileName);
+            
             // Load file as Resource
             Resource resource = fileStorageService.loadFileAsResource(fileName);
             
-            // Try to determine file's content type
-            String contentType = null;
-            try {
-                contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-            } catch (IOException ex) {
-                logger.info("Could not determine file type.");
-            }
-            
-            // Fallback to the default content type if type could not be determined
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
+            // Get content type from database
+            String contentType = fileDataRepository.findByFilePath(fileName)
+                .map(fileData -> fileData.getFileType())
+                .orElse("application/octet-stream");
             
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
                     .body(resource);
         } catch (Exception e) {
             logger.error("Error retrieving file: {}", fileName, e);

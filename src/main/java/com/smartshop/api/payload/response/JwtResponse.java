@@ -1,5 +1,6 @@
 package com.smartshop.api.payload.response;
 
+import com.smartshop.api.services.FileStorageService;
 import lombok.Data;
 
 import java.util.List;
@@ -12,7 +13,8 @@ public class JwtResponse {
     private String name;
     private String email;
     private String phone;
-    private String profileImage;
+    private String imageRelativePath;
+    private String imageUrl;
     private List<String> roles;
 
     public JwtResponse(String token, Long id, String name, String email, String phone, String profileImage, List<String> roles) {
@@ -21,7 +23,11 @@ public class JwtResponse {
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.profileImage = profileImage;
+        this.imageRelativePath = profileImage;
         this.roles = roles;
+    }
+    
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 } 

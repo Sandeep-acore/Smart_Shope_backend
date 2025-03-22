@@ -9,6 +9,7 @@ import com.smartshop.api.repositories.ProductRepository;
 import com.smartshop.api.repositories.UserRepository;
 import com.smartshop.api.repositories.WishlistItemRepository;
 import com.smartshop.api.security.services.UserDetailsImpl;
+import com.smartshop.api.services.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class WishlistController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<WishlistResponse> getWishlist() {
@@ -47,7 +51,7 @@ public class WishlistController {
             List<WishlistItem> wishlistItems = wishlistItemRepository.findByUser(user);
             logger.debug("Found {} items in wishlist for user: {}", wishlistItems.size(), user.getEmail());
             
-            return ResponseEntity.ok(new WishlistResponse(wishlistItems));
+            return ResponseEntity.ok(new WishlistResponse(wishlistItems, fileStorageService));
         } catch (Exception e) {
             logger.error("Error fetching wishlist", e);
             throw e;
@@ -80,8 +84,9 @@ public class WishlistController {
             WishlistItem wishlistItem = new WishlistItem(user, product);
             wishlistItemRepository.save(wishlistItem);
             
+            List<WishlistItem> wishlistItems = wishlistItemRepository.findByUser(user);
             logger.info("Product added to wishlist successfully for user: {}", user.getEmail());
-            return ResponseEntity.ok(new MessageResponse("Product added to wishlist successfully."));
+            return ResponseEntity.ok(new WishlistResponse(wishlistItems, fileStorageService));
         } catch (Exception e) {
             logger.error("Error adding product to wishlist", e);
             throw e;
@@ -103,9 +108,10 @@ public class WishlistController {
                     });
             
             wishlistItemRepository.deleteByUserAndProduct(user, product);
-            logger.info("Product removed from wishlist successfully for user: {}", user.getEmail());
             
-            return ResponseEntity.ok(new MessageResponse("Product removed from wishlist successfully."));
+            List<WishlistItem> wishlistItems = wishlistItemRepository.findByUser(user);
+            logger.info("Product removed from wishlist successfully for user: {}", user.getEmail());
+            return ResponseEntity.ok(new WishlistResponse(wishlistItems, fileStorageService));
         } catch (Exception e) {
             logger.error("Error removing product from wishlist", e);
             throw e;
@@ -123,7 +129,7 @@ public class WishlistController {
             wishlistItemRepository.deleteAll(wishlistItems);
             
             logger.info("Wishlist cleared successfully for user: {}", user.getEmail());
-            return ResponseEntity.ok(new MessageResponse("Wishlist cleared successfully."));
+            return ResponseEntity.ok(new WishlistResponse(wishlistItemRepository.findByUser(user), fileStorageService));
         } catch (Exception e) {
             logger.error("Error clearing wishlist", e);
             throw e;
