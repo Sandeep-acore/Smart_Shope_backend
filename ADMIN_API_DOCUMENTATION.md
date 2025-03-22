@@ -244,6 +244,7 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9...
   | price | number | Yes | Product price (positive number) |
   | stockQuantity | integer | Yes | Stock quantity (non-negative integer) |
   | categoryId | integer | Yes | Category ID |
+  | discountPercentage | integer | No | Discount percentage (0-100) |
   | image | file | No | Product image (JPEG, JPG, PNG only) |
 - **Response**: Created product
   ```json

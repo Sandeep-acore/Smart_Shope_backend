@@ -67,6 +67,7 @@ public class ProductController {
             @RequestParam("price") BigDecimal price,
             @RequestParam("stockQuantity") Integer stockQuantity,
             @RequestParam("categoryId") Long categoryId,
+            @RequestParam(value = "discountPercentage", required = false, defaultValue = "0") Integer discountPercentage,
             @RequestParam(value = "image", required = false) MultipartFile image) {
 
         try {
@@ -87,11 +88,17 @@ public class ProductController {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Stock quantity must be a non-negative integer"));
             }
             
+            // Validate discount percentage
+            if (discountPercentage < 0 || discountPercentage > 100) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Discount percentage must be between 0 and 100"));
+            }
+            
             // Find category or throw appropriate error
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
 
             Product product = new Product(name, description, price, stockQuantity, category);
+            product.setDiscountPercentage(discountPercentage);
 
             // Handle image upload
             if (image != null && !image.isEmpty()) {

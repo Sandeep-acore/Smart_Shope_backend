@@ -166,4 +166,45 @@ public class AdminOrderController {
         
         return ResponseEntity.ok(statistics);
     }
+    
+    @GetMapping("/with-users")
+    public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithUserDetails() {
+        List<Order> orders = orderRepository.findAll();
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        
+        List<Map<String, Object>> responseList = orders.stream()
+            .map(order -> {
+                Map<String, Object> response = new HashMap<>();
+                
+                // Order details
+                response.put("order", OrderDetailsResponse.fromOrder(order, baseUrl));
+                
+                // Detailed user information
+                User user = order.getUser();
+                Map<String, Object> userDetails = new HashMap<>();
+                userDetails.put("id", user.getId());
+                userDetails.put("name", user.getName());
+                userDetails.put("email", user.getEmail());
+                userDetails.put("phone", user.getPhone());
+                userDetails.put("profileImage", user.getProfileImage() != null ? 
+                    baseUrl + "/api/files/" + user.getProfileImage() : null);
+                userDetails.put("addressLine1", user.getAddressLine1());
+                userDetails.put("addressLine2", user.getAddressLine2());
+                userDetails.put("city", user.getCity());
+                userDetails.put("state", user.getState());
+                userDetails.put("postalCode", user.getPostalCode());
+                userDetails.put("country", user.getCountry());
+                userDetails.put("roles", user.getRoles().stream()
+                    .map(role -> role.getName().name())
+                    .collect(Collectors.toList()));
+                userDetails.put("createdAt", user.getCreatedAt());
+                
+                response.put("userDetails", userDetails);
+                
+                return response;
+            })
+            .collect(Collectors.toList());
+            
+        return ResponseEntity.ok(responseList);
+    }
 } 
