@@ -42,7 +42,8 @@ public class AdminOrderController {
     
     @GetMapping
     public ResponseEntity<List<OrderDetailsResponse>> getAllOrders() {
-        List<Order> orders = orderRepository.findAll();
+        // Using a join fetch to eagerly load the orders with items and user data
+        List<Order> orders = orderRepository.findAllWithItemsAndUser();
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         
         List<OrderDetailsResponse> responses = orders.stream()
@@ -169,7 +170,8 @@ public class AdminOrderController {
     
     @GetMapping("/with-users")
     public ResponseEntity<List<Map<String, Object>>> getAllOrdersWithUserDetails() {
-        List<Order> orders = orderRepository.findAll();
+        // Using a join fetch to eagerly load the orders with items and user data
+        List<Order> orders = orderRepository.findAllWithItemsAndUser();
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         
         List<Map<String, Object>> responseList = orders.stream()
@@ -187,7 +189,7 @@ public class AdminOrderController {
                 userDetails.put("email", user.getEmail());
                 userDetails.put("phone", user.getPhone());
                 userDetails.put("profileImage", user.getProfileImage() != null ? 
-                    baseUrl + "/api/files/" + user.getProfileImage() : null);
+                    baseUrl + "/api/files/profiles/" + user.getProfileImage() : null);
                 userDetails.put("addressLine1", user.getAddressLine1());
                 userDetails.put("addressLine2", user.getAddressLine2());
                 userDetails.put("city", user.getCity());

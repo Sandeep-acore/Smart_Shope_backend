@@ -53,4 +53,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         
         return result;
     }
+    
+    @Query("SELECT o FROM Order o JOIN FETCH o.items i JOIN FETCH o.user u JOIN FETCH i.product")
+    List<Order> findAllWithItemsAndUser();
 } 
