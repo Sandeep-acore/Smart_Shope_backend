@@ -54,10 +54,12 @@ public class CartController {
             List<CartItem> cartItems = cartItemRepository.findByUser(user);
             logger.debug("Found {} items in cart for user: {}", cartItems.size(), user.getEmail());
             
-            return ResponseEntity.ok(new CartResponse(cartItems, fileStorageService));
+            CartResponse response = new CartResponse(cartItems, fileStorageService);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            logger.error("Error fetching cart", e);
-            throw e;
+            logger.error("Error fetching cart: {}", e.getMessage(), e);
+            // Instead of rethrowing, return an empty cart response
+            return ResponseEntity.ok(new CartResponse(java.util.Collections.emptyList(), fileStorageService));
         }
     }
 
