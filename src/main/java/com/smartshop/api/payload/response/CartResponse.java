@@ -3,6 +3,7 @@ package com.smartshop.api.payload.response;
 import com.smartshop.api.models.CartItem;
 import com.smartshop.api.services.FileStorageService;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +15,8 @@ public class CartResponse {
     private BigDecimal subtotal;
     private int itemCount;
     
-    private final FileStorageService fileStorageService;
+    @JsonIgnore
+    private FileStorageService fileStorageService;
     
     public CartResponse(List<CartItem> cartItems, FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
