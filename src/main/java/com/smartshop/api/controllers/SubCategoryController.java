@@ -10,6 +10,7 @@ import com.smartshop.api.services.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +31,9 @@ public class SubCategoryController {
     private final SubCategoryRepository subCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final FileStorageService fileStorageService;
+    
+    @Value("${app.url:}")
+    private String appUrl;
 
     @Autowired
     public SubCategoryController(SubCategoryRepository subCategoryRepository, CategoryRepository categoryRepository, FileStorageService fileStorageService) {
@@ -37,10 +41,17 @@ public class SubCategoryController {
         this.categoryRepository = categoryRepository;
         this.fileStorageService = fileStorageService;
     }
+    
+    private String getBaseUrl() {
+        if (appUrl != null && !appUrl.isEmpty()) {
+            return appUrl;
+        }
+        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    }
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<SubCategoryResponse>> getSubCategoriesByCategory(@PathVariable Long categoryId) {
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        String baseUrl = getBaseUrl();
         List<SubCategory> subCategories = subCategoryRepository.findByCategoryId(categoryId);
         
         List<SubCategoryResponse> responses = subCategories.stream()
@@ -95,7 +106,7 @@ public class SubCategoryController {
 
             SubCategory savedSubCategory = subCategoryRepository.save(subCategory);
             
-            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            String baseUrl = getBaseUrl();
             return ResponseEntity.status(HttpStatus.CREATED).body(SubCategoryResponse.fromSubCategory(savedSubCategory, baseUrl));
         } catch (Exception e) {
             return ResponseEntity
@@ -106,7 +117,7 @@ public class SubCategoryController {
 
     @GetMapping
     public ResponseEntity<List<SubCategoryResponse>> getAllSubCategories() {
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        String baseUrl = getBaseUrl();
         List<SubCategory> subCategories = subCategoryRepository.findAll();
         
         List<SubCategoryResponse> responses = subCategories.stream()
@@ -120,7 +131,7 @@ public class SubCategoryController {
     public ResponseEntity<SubCategoryResponse> getSubCategory(@PathVariable Long id) {
         return subCategoryRepository.findById(id)
                 .map(subCategory -> {
-                    String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+                    String baseUrl = getBaseUrl();
                     return ResponseEntity.ok(SubCategoryResponse.fromSubCategory(subCategory, baseUrl));
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -182,7 +193,7 @@ public class SubCategoryController {
 
             SubCategory updatedSubCategory = subCategoryRepository.save(subCategory);
             
-            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            String baseUrl = getBaseUrl();
             return ResponseEntity.ok(SubCategoryResponse.fromSubCategory(updatedSubCategory, baseUrl));
         } catch (Exception e) {
             return ResponseEntity
