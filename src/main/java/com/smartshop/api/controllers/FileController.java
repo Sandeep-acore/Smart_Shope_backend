@@ -7,6 +7,7 @@ import com.smartshop.api.services.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -35,6 +36,16 @@ public class FileController {
     
     @Autowired
     private FileDataRepository fileDataRepository;
+
+    @Value("${app.url:}")
+    private String appUrl;
+
+    private String getBaseUrl() {
+        if (appUrl != null && !appUrl.isEmpty()) {
+            return appUrl;
+        }
+        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    }
 
     @GetMapping("/{directory}/{fileName:.+}")
     public ResponseEntity<Resource> getFileWithDirectory(
@@ -90,8 +101,7 @@ public class FileController {
     @GetMapping("/offers/images")
     public ResponseEntity<List<String>> getAllOfferImageUrls() {
         List<Offer> offers = offerRepository.findByActiveTrue();
-        
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        String baseUrl = getBaseUrl();
         
         List<String> fullImageUrls = offers.stream()
                 .map(offer -> {
@@ -106,8 +116,7 @@ public class FileController {
     @GetMapping("/offers/images/with-details")
     public ResponseEntity<List<OfferImageDTO>> getAllOfferImagesWithDetails() {
         List<Offer> offers = offerRepository.findByActiveTrue();
-        
-        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        String baseUrl = getBaseUrl();
         
         List<OfferImageDTO> offerImages = offers.stream()
                 .map(offer -> {

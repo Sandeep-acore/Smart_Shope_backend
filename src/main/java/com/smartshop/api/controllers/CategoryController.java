@@ -10,12 +10,14 @@ import com.smartshop.api.services.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
@@ -39,6 +41,16 @@ public class CategoryController {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Value("${app.url:}")
+    private String appUrl;
+
+    private String getBaseUrl() {
+        if (appUrl != null && !appUrl.isEmpty()) {
+            return appUrl;
+        }
+        return ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    }
+
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
@@ -61,46 +73,56 @@ public class CategoryController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('PRODUCT_MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> createCategory(
             @RequestParam("name") String name,
-            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("description") String description,
             @RequestParam(value = "image", required = false) MultipartFile image) {
-
         try {
-            // Validation
+            // Validate name
             if (name == null || name.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Category name is required"));
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Name is required"));
             }
-            
-            // Check if category already exists
+
+            // Check if category with same name already exists
             if (categoryRepository.existsByName(name)) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Category with this name already exists"));
+                return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error: A category with name '" + name + "' already exists"));
             }
-            
-            // Create new category
+
             Category category = new Category();
             category.setName(name);
             category.setDescription(description);
-            
+
             // Handle image upload
             if (image != null && !image.isEmpty()) {
-                // Check file type
-                String contentType = image.getContentType();
-                if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
-                    return ResponseEntity.badRequest().body(new MessageResponse("Error: Only JPEG, JPG and PNG images are supported"));
+                try {
+                    // Check image type
+                    String contentType = image.getContentType();
+                    if (contentType == null || !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/jpg"))) {
+                        return ResponseEntity.badRequest().body(new MessageResponse("Error: Only JPEG, JPG and PNG images are supported"));
+                    }
+                    
+                    String imageUrl = fileStorageService.storeFile(image, "categories");
+                    if (imageUrl == null) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new MessageResponse("Error: Failed to save image file"));
+                    }
+                    category.setImageUrl(imageUrl);
+                } catch (Exception e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new MessageResponse("Error saving category image: " + e.getMessage()));
                 }
-                
-                String imagePath = fileStorageService.storeFile(image, "categories");
-                category.setImageUrl(imagePath);
             }
+
+            Category savedCategory = categoryRepository.save(category);
             
-            categoryRepository.save(category);
-            
-            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-            return ResponseEntity.status(HttpStatus.CREATED).body(CategoryResponse.fromCategory(category, baseUrl));
+            String baseUrl = getBaseUrl();
+            return ResponseEntity.status(HttpStatus.CREATED).body(CategoryResponse.fromCategory(savedCategory, baseUrl));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new MessageResponse("Error: " + e.getMessage()));
         }
     }

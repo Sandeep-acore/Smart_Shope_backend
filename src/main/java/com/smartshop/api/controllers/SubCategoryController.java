@@ -81,6 +81,12 @@ public class SubCategoryController {
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
 
+            // Check if subcategory with same name exists in the same category
+            if (subCategoryRepository.existsByNameAndCategoryId(name, categoryId)) {
+                return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Error: A subcategory with name '" + name + "' already exists in category '" + category.getName() + "'"));
+            }
+
             SubCategory subCategory = new SubCategory();
             subCategory.setName(name);
             subCategory.setDescription(description);
