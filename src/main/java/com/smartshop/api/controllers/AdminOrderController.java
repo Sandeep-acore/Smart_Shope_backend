@@ -189,7 +189,7 @@ public class AdminOrderController {
                 userDetails.put("email", user.getEmail());
                 userDetails.put("phone", user.getPhone());
                 userDetails.put("profileImage", user.getProfileImage() != null ? 
-                    baseUrl + "/api/files/profiles/" + user.getProfileImage() : null);
+                    baseUrl + "/files/profiles/" + user.getProfileImage() : null);
                 userDetails.put("addressLine1", user.getAddressLine1());
                 userDetails.put("addressLine2", user.getAddressLine2());
                 userDetails.put("city", user.getCity());

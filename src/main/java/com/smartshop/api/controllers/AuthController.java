@@ -388,15 +388,34 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    @PostMapping(value = "/reset-password", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> resetPassword(
+            @RequestParam(value = "email", required = false) String emailParam,
+            @RequestBody(required = false) ResetPasswordRequest requestBody) {
+        String email = null;
         try {
-            logger.info("Processing password reset request for email: {}", request.getEmail());
+            // Validate email input
+            email = emailParam != null ? emailParam : (requestBody != null ? requestBody.getEmail() : null);
+            if (email == null || email.trim().isEmpty()) {
+                logger.warn("Reset password request failed - Email is required");
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("Email is required"));
+            }
+
+            // Validate email format
+            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                logger.warn("Reset password request failed - Invalid email format: {}", email);
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("Invalid email format"));
+            }
+
+            logger.info("Processing password reset request for email: {}", email);
             
-            Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+            Optional<User> userOptional = userRepository.findByEmail(email);
             if (!userOptional.isPresent()) {
-                logger.warn("Password reset failed - User not found: {}", request.getEmail());
-                return ResponseEntity.badRequest().body(MessageResponse.error("User not found with this email."));
+                logger.warn("Password reset failed - User not found: {}", email);
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("No account found with this email address"));
             }
 
             User user = userOptional.get();
@@ -405,59 +424,145 @@ public class AuthController {
             String otp = String.format("%06d", new Random().nextInt(999999));
             user.setOtp(otp);
             user.setOtpExpiryTime(LocalDateTime.now().plusMinutes(10)); // OTP valid for 10 minutes
-            userRepository.save(user);
+            
+            try {
+                userRepository.save(user);
+                logger.info("Generated and saved OTP for user: {}", email);
+            } catch (Exception e) {
+                logger.error("Failed to save OTP to database for user: {}", email, e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(MessageResponse.error("Failed to process password reset request. Please try again later."));
+            }
 
-            // Send OTP via email
-            emailService.sendOtpEmail(user.getEmail(), otp);
-
-            logger.info("Password reset OTP sent to: {}", request.getEmail());
-            return ResponseEntity.ok(MessageResponse.success("Password reset OTP has been sent to your email."));
+            try {
+                // Send OTP via email
+                logger.info("Attempting to send OTP email to: {}", email);
+                emailService.sendOtpEmail(user.getEmail(), otp);
+                logger.info("Successfully sent OTP email to: {}", email);
+                return ResponseEntity.ok(MessageResponse.success("Password reset OTP has been sent to your email."));
+            } catch (IllegalArgumentException e) {
+                logger.error("Invalid input for email sending: {}", e.getMessage());
+                // Clear OTP if email sending fails
+                try {
+                    user.setOtp(null);
+                    user.setOtpExpiryTime(null);
+                    userRepository.save(user);
+                    logger.info("Cleared OTP after email sending failure for user: {}", email);
+                } catch (Exception ex) {
+                    logger.error("Failed to clear OTP after email sending failure for user: {}", email, ex);
+                }
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error(e.getMessage()));
+            } catch (Exception e) {
+                logger.error("Failed to send OTP email to: {}", email, e);
+                // Clear OTP if email sending fails
+                try {
+                    user.setOtp(null);
+                    user.setOtpExpiryTime(null);
+                    userRepository.save(user);
+                    logger.info("Cleared OTP after email sending failure for user: {}", email);
+                } catch (Exception ex) {
+                    logger.error("Failed to clear OTP after email sending failure for user: {}", email, ex);
+                }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(MessageResponse.error("Failed to send OTP email. Please try again later."));
+            }
         } catch (Exception e) {
-            logger.error("Error during password reset request: {}", request.getEmail(), e);
+            logger.error("Unexpected error during password reset request for email: {}", email, e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MessageResponse.error(e.getMessage()));
+                    .body(MessageResponse.error("An unexpected error occurred. Please try again later."));
         }
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequest request) {
+    public ResponseEntity<?> verifyOtp(
+            @RequestParam(value = "email", required = false) String emailParam,
+            @RequestParam(value = "otp", required = false) String otpParam,
+            @RequestParam(value = "newPassword", required = false) String newPasswordParam,
+            @RequestBody(required = false) VerifyOtpRequest requestBody) {
+        String email = null;
         try {
-            logger.info("Processing OTP verification for email: {}", request.getEmail());
+            // Validate required fields
+            email = emailParam != null ? emailParam : (requestBody != null ? requestBody.getEmail() : null);
+            String otp = otpParam != null ? otpParam : (requestBody != null ? requestBody.getOtp() : null);
+            String newPassword = newPasswordParam != null ? newPasswordParam : (requestBody != null ? requestBody.getNewPassword() : null);
+
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("Email is required"));
+            }
+
+            if (otp == null || otp.trim().isEmpty()) {
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("OTP is required"));
+            }
+
+            if (newPassword == null || newPassword.trim().isEmpty()) {
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("New password is required"));
+            }
+
+            // Validate email format
+            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("Invalid email format"));
+            }
+
+            // Validate password strength
+            if (newPassword.length() < 6) {
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("Password must be at least 6 characters long"));
+            }
             
-            Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+            logger.info("Processing OTP verification for email: {}", email);
+            
+            Optional<User> userOptional = userRepository.findByEmail(email);
             if (!userOptional.isPresent()) {
-                logger.warn("OTP verification failed - User not found: {}", request.getEmail());
-                return ResponseEntity.badRequest().body(MessageResponse.error("User not found with this email."));
+                logger.warn("OTP verification failed - User not found: {}", email);
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("No account found with this email address"));
             }
 
             User user = userOptional.get();
             
             // Verify OTP
-            if (user.getOtp() == null || !user.getOtp().equals(request.getOtp())) {
-                logger.warn("OTP verification failed - Invalid OTP for user: {}", request.getEmail());
-                return ResponseEntity.badRequest().body(MessageResponse.error("Invalid OTP."));
+            if (user.getOtp() == null) {
+                logger.warn("OTP verification failed - No OTP found for user: {}", email);
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("No OTP request found. Please request a new OTP."));
+            }
+
+            if (!user.getOtp().equals(otp)) {
+                logger.warn("OTP verification failed - Invalid OTP for user: {}", email);
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("Invalid OTP. Please check and try again."));
             }
             
             // Check if OTP is expired
             if (user.getOtpExpiryTime() == null || LocalDateTime.now().isAfter(user.getOtpExpiryTime())) {
-                logger.warn("OTP verification failed - Expired OTP for user: {}", request.getEmail());
-                return ResponseEntity.badRequest().body(MessageResponse.error("OTP has expired."));
+                logger.warn("OTP verification failed - Expired OTP for user: {}", email);
+                // Clear expired OTP
+                user.setOtp(null);
+                user.setOtpExpiryTime(null);
+                userRepository.save(user);
+                return ResponseEntity.badRequest()
+                    .body(MessageResponse.error("OTP has expired. Please request a new OTP."));
             }
             
             // Update password
-            user.setPassword(encoder.encode(request.getNewPassword()));
+            user.setPassword(encoder.encode(newPassword));
             user.setOtp(null);
             user.setOtpExpiryTime(null);
             userRepository.save(user);
 
-            logger.info("Password reset successful for user: {}", request.getEmail());
+            logger.info("Password reset successful for user: {}", email);
             return ResponseEntity.ok(MessageResponse.success("Password has been reset successfully."));
         } catch (Exception e) {
-            logger.error("Error during OTP verification: {}", request.getEmail(), e);
+            logger.error("Error during OTP verification: {}", email, e);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MessageResponse.error(e.getMessage()));
+                    .body(MessageResponse.error("An unexpected error occurred. Please try again later."));
         }
     }
 

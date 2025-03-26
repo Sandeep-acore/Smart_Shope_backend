@@ -1,8 +1,13 @@
 FROM maven:3.8.6-openjdk-11-slim AS build
 WORKDIR /app
 
-# Copy the project files
-COPY . .
+# Copy only the POM file first to cache dependencies
+COPY pom.xml .
+# Download dependencies in a separate layer
+RUN mvn dependency:go-offline
+
+# Copy the source code
+COPY src/ ./src/
 
 # Build the application
 RUN mvn clean package -DskipTests
@@ -30,4 +35,4 @@ ENV TZ=UTC
 EXPOSE 10000
 
 # Run the application with Render's environment variables
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"] 
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=prod", "-jar", "app.jar"] 

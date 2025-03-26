@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
@@ -39,19 +41,49 @@ public class OrderDTO {
     
     public OrderDTO(Order order, String baseUrl) {
         this.id = order.getId();
-        this.orderNumber = "ORD-" + String.format("%06d", order.getId());
+        
+        // Use the order number from the Order entity if available
+        if (order.getOrderNumber() != null && !order.getOrderNumber().isEmpty()) {
+            this.orderNumber = order.getOrderNumber();
+        } else {
+            // Fallback to generating a new order number if not available
+            String timestamp = "";
+            if (order.getCreatedAt() != null) {
+                timestamp = order.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+            } else {
+                timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+            }
+            String uniqueId = UUID.randomUUID().toString().substring(0, 4);
+            this.orderNumber = "ORD-" + timestamp + "-" + uniqueId;
+        }
+        
+        // Convert order items and calculate totals directly from items
         this.items = order.getItems().stream()
                 .map(item -> convertToOrderItemDTO(item, baseUrl))
                 .collect(Collectors.toList());
+                
+        // Calculate subtotal directly from the order items to ensure accuracy
+        this.subtotal = this.items.stream()
+                .map(item -> item.getTotalPrice())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                
         this.shippingAddress = convertToAddressDTO(order.getShippingAddress());
         this.deliveryAddress = convertToAddressDTO(order.getDeliveryAddress());
         this.status = order.getStatus();
         this.paymentStatus = order.getPaymentStatus();
         this.paymentMethod = order.getPaymentMethod().toString();
-        this.subtotal = order.getSubtotal();
-        this.tax = order.getTax();
-        this.shippingCost = order.getShippingCost();
-        this.total = order.getTotal();
+        
+        // Ensure all the order calculation fields are properly set
+        this.tax = order.getTax() != null ? order.getTax() : BigDecimal.ZERO;
+        this.shippingCost = order.getShippingCost() != null ? order.getShippingCost() : BigDecimal.ZERO;
+        
+        // Calculate the total directly instead of using order.getTotal()
+        BigDecimal discount = order.getDiscount() != null ? order.getDiscount() : BigDecimal.ZERO;
+        this.total = this.subtotal
+                .add(this.tax)
+                .add(this.shippingCost)
+                .subtract(discount);
+        
         this.createdAt = order.getCreatedAt();
         this.deliveredAt = order.getDeliveredAt();
     }
@@ -73,9 +105,22 @@ public class OrderDTO {
         }
         dto.setProductImage(imageUrl);
         
-        dto.setPrice(orderItem.getPrice());
+        // Ensure we're using the discounted price from the OrderItem
+        BigDecimal discountedPrice = orderItem.getDiscountedPrice();
+        if (discountedPrice == null) {
+            // Fallback to the product's discounted price if the OrderItem's price is null
+            discountedPrice = orderItem.getProduct().getDiscountedPrice();
+            if (discountedPrice == null) {
+                // If that's also null, use the regular price
+                discountedPrice = orderItem.getProduct().getPrice();
+            }
+        }
+        dto.setPrice(discountedPrice);
         dto.setQuantity(orderItem.getQuantity());
-        dto.setTotalPrice(orderItem.getPrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+        
+        // Calculate the total price correctly based on the discounted price
+        dto.setTotalPrice(discountedPrice.multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+        
         return dto;
     }
     

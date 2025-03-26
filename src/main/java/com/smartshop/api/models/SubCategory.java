@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "subcategories")
 @Data
-public class Category {
+public class SubCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,7 +26,11 @@ public class Category {
     @Column
     private String imageUrl;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
     @Column(name = "created_at")

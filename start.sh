@@ -8,5 +8,5 @@ mkdir -p logs
 # Set production profile
 export SPRING_PROFILES_ACTIVE=prod
 
-# Run the application
-java -jar target/*.jar 
+# Run the application with memory settings optimized for Render
+java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom -jar target/*.jar 

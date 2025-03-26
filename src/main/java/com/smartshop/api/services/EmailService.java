@@ -19,6 +19,20 @@ public class EmailService {
 
     public void sendOtpEmail(String to, String otp) {
         try {
+            logger.info("Preparing to send OTP email to: {}", to);
+            
+            // Validate email address
+            if (to == null || to.trim().isEmpty()) {
+                logger.error("Cannot send email: recipient email is null or empty");
+                throw new IllegalArgumentException("Recipient email cannot be null or empty");
+            }
+            
+            // Validate OTP
+            if (otp == null || otp.trim().isEmpty()) {
+                logger.error("Cannot send email: OTP is null or empty");
+                throw new IllegalArgumentException("OTP cannot be null or empty");
+            }
+            
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             
@@ -37,12 +51,27 @@ public class EmailService {
             
             helper.setText(emailContent, true);
             
-            mailSender.send(message);
-            logger.info("OTP email sent to: {}", to);
+            logger.info("Attempting to send email to: {}", to);
+            try {
+                mailSender.send(message);
+                logger.info("Successfully sent OTP email to: {}", to);
+            } catch (Exception e) {
+                logger.error("Failed to send email using mailSender: {}", e.getMessage(), e);
+                // In development mode, log the OTP for testing
+                logger.info("Development mode - OTP for {}: {}", to, otp);
+                throw new RuntimeException("Failed to send email: " + e.getMessage(), e);
+            }
         } catch (MessagingException e) {
-            logger.error("Failed to send OTP email: {}", e.getMessage());
+            logger.error("Failed to send OTP email to {}: {}", to, e.getMessage(), e);
             // In development mode, log the OTP for testing
             logger.info("Development mode - OTP for {}: {}", to, otp);
+            throw new RuntimeException("Failed to send OTP email: " + e.getMessage(), e);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid input for email sending: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unexpected error sending OTP email to {}: {}", to, e.getMessage(), e);
+            throw new RuntimeException("Failed to send OTP email: " + e.getMessage(), e);
         }
     }
 } 

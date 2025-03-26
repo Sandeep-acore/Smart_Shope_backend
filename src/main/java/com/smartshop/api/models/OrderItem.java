@@ -35,6 +35,6 @@ public class OrderItem {
         this.product = product;
         this.quantity = quantity;
         this.price = product.getPrice();
-        this.discountedPrice = product.getDiscountedPrice();
+        this.discountedPrice = product.getDiscountedPrice() != null ? product.getDiscountedPrice() : product.getPrice();
     }
 } 

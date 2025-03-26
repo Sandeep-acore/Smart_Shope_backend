@@ -25,4 +25,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> filter(@Param("categoryId") Long categoryId, 
                          @Param("minPrice") BigDecimal minPrice, 
                          @Param("maxPrice") BigDecimal maxPrice);
+    
+    List<Product> findBySubCategoryId(Long subCategoryId);
 } 

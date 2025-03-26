@@ -6,6 +6,7 @@ import com.smartshop.api.payload.response.MessageResponse;
 import com.smartshop.api.payload.response.ProductResponse;
 import com.smartshop.api.repositories.CategoryRepository;
 import com.smartshop.api.repositories.ProductRepository;
+import com.smartshop.api.repositories.SubCategoryRepository;
 import com.smartshop.api.services.FileStorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,9 @@ public class ProductController {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
 
     @Autowired
     private FileStorageService fileStorageService;
@@ -67,8 +71,9 @@ public class ProductController {
             @RequestParam("price") BigDecimal price,
             @RequestParam("stockQuantity") Integer stockQuantity,
             @RequestParam("categoryId") Long categoryId,
-            @RequestParam(value = "discountPercentage", required = false, defaultValue = "0") Integer discountPercentage,
-            @RequestParam(value = "image", required = false) MultipartFile image) {
+            @RequestParam("subcategory") Long subCategoryId,
+            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "discountPercentage", required = false) Integer discountPercentage) {
 
         try {
             // Validate required fields
@@ -88,17 +93,31 @@ public class ProductController {
                 return ResponseEntity.badRequest().body(new MessageResponse("Error: Stock quantity must be a non-negative integer"));
             }
             
-            // Validate discount percentage
-            if (discountPercentage < 0 || discountPercentage > 100) {
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Discount percentage must be between 0 and 100"));
+            // Check if category exists
+            if (!categoryRepository.existsById(categoryId)) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: Category not found"));
             }
             
-            // Find category or throw appropriate error
+            // Check if subcategory exists
+            if (!subCategoryRepository.existsById(subCategoryId)) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Error: SubCategory not found"));
+            }
+
+            // Find category and subcategory
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
 
             Product product = new Product(name, description, price, stockQuantity, category);
-            product.setDiscountPercentage(discountPercentage);
+            product.setSubCategory(subCategoryRepository.findById(subCategoryId).orElseThrow());
+            
+            // Set discount percentage if provided
+            if (discountPercentage != null && discountPercentage > 0) {
+                product.setDiscountPercentage(discountPercentage);
+                // Calculate discounted price
+                BigDecimal discountAmount = price.multiply(BigDecimal.valueOf(discountPercentage))
+                        .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+                product.setDiscountedPrice(price.subtract(discountAmount));
+            }
 
             // Handle image upload
             if (image != null && !image.isEmpty()) {
@@ -141,7 +160,7 @@ public class ProductController {
             @RequestParam("price") BigDecimal price,
             @RequestParam("stockQuantity") Integer stockQuantity,
             @RequestParam(value = "categoryId", required = false) Long categoryId,
-            @RequestParam(value = "discountPercentage", required = false, defaultValue = "0") Integer discountPercentage,
+            @RequestParam(value = "subCategoryId", required = false) Long subCategoryId,
             @RequestParam(value = "image", required = false) MultipartFile image) {
 
         try {
@@ -154,13 +173,18 @@ public class ProductController {
             product.setDescription(description);
             product.setPrice(price);
             product.setStockQuantity(stockQuantity);
-            product.setDiscountPercentage(discountPercentage);
 
             // Update category if provided
             if (categoryId != null) {
                 Category category = categoryRepository.findById(categoryId)
                         .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + categoryId));
                 product.setCategory(category);
+            }
+
+            // Update subcategory if provided
+            if (subCategoryId != null) {
+                product.setSubCategory(subCategoryRepository.findById(subCategoryId)
+                        .orElseThrow(() -> new EntityNotFoundException("SubCategory not found with id: " + subCategoryId)));
             }
 
             // Update image if provided
@@ -251,6 +275,18 @@ public class ProductController {
         List<Product> products = productRepository.filter(category, minPrice, maxPrice);
         
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        List<ProductResponse> responses = products.stream()
+            .map(product -> ProductResponse.fromProduct(product, baseUrl))
+            .collect(Collectors.toList());
+            
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/subcategory/{subCategoryId}")
+    public ResponseEntity<List<ProductResponse>> getProductsBySubCategory(@PathVariable Long subCategoryId) {
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        List<Product> products = productRepository.findBySubCategoryId(subCategoryId);
+        
         List<ProductResponse> responses = products.stream()
             .map(product -> ProductResponse.fromProduct(product, baseUrl))
             .collect(Collectors.toList());

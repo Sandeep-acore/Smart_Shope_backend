@@ -1,12 +1,15 @@
 package com.smartshop.api.controllers;
 
 import com.smartshop.api.models.*;
+import com.smartshop.api.models.ERole;
 import com.smartshop.api.payload.request.*;
 import com.smartshop.api.payload.response.MessageResponse;
 import com.smartshop.api.payload.response.OrderDTO;
 import com.smartshop.api.repositories.OrderRepository;
 import com.smartshop.api.repositories.ProductRepository;
 import com.smartshop.api.repositories.UserRepository;
+import com.smartshop.api.repositories.CategoryRepository;
+import com.smartshop.api.repositories.SubCategoryRepository;
 import com.smartshop.api.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,6 +46,12 @@ public class OrderController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
 
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN') or hasRole('DELIVERY_PARTNER')")
@@ -440,6 +449,11 @@ public class OrderController {
             List<Order> allOrders = orderRepository.findAllWithDetails();
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
             
+            // Get total counts for products, categories and subcategories
+            long totalProducts = productRepository.count();
+            long totalCategories = categoryRepository.count();
+            long totalSubCategories = subCategoryRepository.count();
+            
             // Calculate basic counts
             int totalOrders = allOrders.size();
             long pendingOrders = allOrders.stream().filter(o -> o.getStatus() == OrderStatus.PENDING).count();
@@ -454,22 +468,25 @@ public class OrderController {
             // Calculate cancellation rate
             double cancellationRate = totalOrders > 0 ? (double)cancelledOrders / totalOrders * 100 : 0;
             
-            // Calculate total revenue from successful orders
+            // Calculate total revenue from successful orders using the discounted price
             BigDecimal totalRevenue = allOrders.stream()
                     .filter(o -> o.getStatus() == OrderStatus.DELIVERED)
-                    .map(Order::getTotal)
+                    .flatMap(order -> order.getItems().stream()
+                        .map(item -> item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()))))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             
-            // Calculate revenue from pending/processing orders
+            // Calculate revenue from pending/processing orders using the discounted price
             BigDecimal pendingRevenue = allOrders.stream()
                     .filter(o -> o.getStatus() == OrderStatus.PENDING || o.getStatus() == OrderStatus.PROCESSING)
-                    .map(Order::getTotal)
+                    .flatMap(order -> order.getItems().stream()
+                        .map(item -> item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()))))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             
-            // Calculate lost revenue from cancelled orders
+            // Calculate lost revenue from cancelled orders using the discounted price
             BigDecimal lostRevenue = allOrders.stream()
                     .filter(o -> o.getStatus() == OrderStatus.CANCELLED)
-                    .map(Order::getTotal)
+                    .flatMap(order -> order.getItems().stream()
+                        .map(item -> item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()))))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
             
             // Count unique customers who have placed orders
@@ -485,10 +502,11 @@ public class OrderController {
                     .mapToLong(OrderItem::getQuantity)
                     .sum();
             
-            // Calculate average order value
+            // Calculate average order value using discounted prices
             BigDecimal avgOrderValue = totalOrders > 0 ? 
                     allOrders.stream()
-                            .map(Order::getTotal)
+                            .flatMap(order -> order.getItems().stream()
+                                .map(item -> item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()))))
                             .reduce(BigDecimal.ZERO, BigDecimal::add)
                             .divide(BigDecimal.valueOf(totalOrders), 2, RoundingMode.HALF_UP) : BigDecimal.ZERO;
             
@@ -504,7 +522,7 @@ public class OrderController {
                             Map<String, Object> productInfo = orderedProducts.get(productId);
                             Long currentQuantity = (Long) productInfo.get("quantity");
                             BigDecimal currentRevenue = (BigDecimal) productInfo.get("totalRevenue");
-                            BigDecimal itemRevenue = item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+                            BigDecimal itemRevenue = item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
                             
                             productInfo.put("quantity", currentQuantity + item.getQuantity());
                             productInfo.put("totalRevenue", currentRevenue.add(itemRevenue));
@@ -517,17 +535,17 @@ public class OrderController {
                             
                             // Make sure we have the full category image URL too
                             if (item.getProduct().getCategory() != null && !productInfo.containsKey("categoryImage")) {
-                                String categoryImagePath = item.getProduct().getCategory().getImagePath();
-                                if (categoryImagePath != null && !categoryImagePath.isEmpty()) {
-                                    if (!categoryImagePath.startsWith("http")) {
-                                        categoryImagePath = baseUrl + "/files/" + categoryImagePath;
+                                String categoryImageUrl = item.getProduct().getCategory().getImageUrl();
+                                if (categoryImageUrl != null && !categoryImageUrl.isEmpty()) {
+                                    if (!categoryImageUrl.startsWith("http")) {
+                                        categoryImageUrl = baseUrl + "/files/" + categoryImageUrl;
                                     }
-                                    productInfo.put("categoryImage", categoryImagePath);
+                                    productInfo.put("categoryImage", categoryImageUrl);
                                 }
                             }
                         } else {
                             Map<String, Object> productInfo = new HashMap<>();
-                            BigDecimal itemRevenue = item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+                            BigDecimal itemRevenue = item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
                             String imageUrl = item.getProduct().getImageUrl();
                             
                             // Convert relative image path to full URL
@@ -541,6 +559,7 @@ public class OrderController {
                             productInfo.put("name", productName);
                             productInfo.put("quantity", (long) item.getQuantity());
                             productInfo.put("price", item.getProduct().getPrice());
+                            productInfo.put("discountedPrice", item.getDiscountedPrice());
                             productInfo.put("totalRevenue", itemRevenue);
                             productInfo.put("imageUrl", imageUrl);
                             
@@ -549,13 +568,18 @@ public class OrderController {
                                 productInfo.put("categoryName", item.getProduct().getCategory().getName());
                                 
                                 // Add category image with full URL
-                                String categoryImagePath = item.getProduct().getCategory().getImagePath();
-                                if (categoryImagePath != null && !categoryImagePath.isEmpty()) {
-                                    if (!categoryImagePath.startsWith("http")) {
-                                        categoryImagePath = baseUrl + "/files/" + categoryImagePath;
+                                String categoryImageUrl = item.getProduct().getCategory().getImageUrl();
+                                if (categoryImageUrl != null && !categoryImageUrl.isEmpty()) {
+                                    if (!categoryImageUrl.startsWith("http")) {
+                                        categoryImageUrl = baseUrl + "/files/" + categoryImageUrl;
                                     }
-                                    productInfo.put("categoryImage", categoryImagePath);
+                                    productInfo.put("categoryImage", categoryImageUrl);
                                 }
+                            }
+                            
+                            if (item.getProduct().getSubCategory() != null) {
+                                productInfo.put("subCategoryId", item.getProduct().getSubCategory().getId());
+                                productInfo.put("subCategoryName", item.getProduct().getSubCategory().getName());
                             }
                             
                             orderedProducts.put(productId, productInfo);
@@ -586,7 +610,18 @@ public class OrderController {
             
             // Create response map
             Map<String, Object> response = new HashMap<>();
+            response.put("totalProducts", totalProducts);
+            response.put("totalCategories", totalCategories);
+            response.put("totalSubCategories", totalSubCategories);
             response.put("totalOrders", totalOrders);
+            
+            // Add total users count (only users with ROLE_USER role, not admins or other roles)
+            long totalUsers = userRepository.findAll().stream()
+                    .filter(user -> user.getRoles().stream()
+                            .anyMatch(role -> role.getName() == ERole.ROLE_USER))
+                    .count();
+            response.put("totalUsers", totalUsers);
+            
             response.put("pendingOrders", pendingOrders);
             response.put("processingOrders", processingOrders);
             response.put("shippedOrders", shippedOrders);
@@ -611,11 +646,14 @@ public class OrderController {
                         .filter(o -> o.getStatus() == status)
                         .collect(Collectors.toList());
                 
+                // Calculate revenue using discounted prices
+                BigDecimal statusRevenue = ordersWithStatus.stream()
+                        .flatMap(order -> order.getItems().stream()
+                            .map(item -> item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity()))))
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                
                 statusReport.put(status.toString().toLowerCase() + "Count", ordersWithStatus.size());
-                statusReport.put(status.toString().toLowerCase() + "Revenue", 
-                        ordersWithStatus.stream()
-                                .map(Order::getTotal)
-                                .reduce(BigDecimal.ZERO, BigDecimal::add));
+                statusReport.put(status.toString().toLowerCase() + "Revenue", statusRevenue);
                 statusReport.put(status.toString().toLowerCase() + "Products", 
                         ordersWithStatus.stream()
                                 .flatMap(order -> order.getItems().stream())

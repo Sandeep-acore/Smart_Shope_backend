@@ -92,7 +92,7 @@ public class CategoryController {
                 }
                 
                 String imagePath = fileStorageService.storeFile(image, "categories");
-                category.setImagePath(imagePath);
+                category.setImageUrl(imagePath);
             }
             
             categoryRepository.save(category);
@@ -152,18 +152,19 @@ public class CategoryController {
             }
             
             // Delete old image if exists
-            if (category.getImagePath() != null) {
-                fileStorageService.deleteFile(category.getImagePath());
+            if (category.getImageUrl() != null) {
+                fileStorageService.deleteFile(category.getImageUrl());
             }
             
             // Store new image
             String imagePath = fileStorageService.storeFile(image, "categories");
-            category.setImagePath(imagePath);
+            category.setImageUrl(imagePath);
             
             categoryRepository.save(category);
             logger.info("Category updated successfully: {}", category.getName());
             
-            return ResponseEntity.ok(category);
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            return ResponseEntity.ok(CategoryResponse.fromCategory(category, baseUrl));
         } catch (Exception e) {
             logger.error("Error updating category with id: {}", id, e);
             return ResponseEntity
@@ -182,8 +183,8 @@ public class CategoryController {
                     .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
             
             // Delete category image if exists
-            if (category.getImagePath() != null) {
-                fileStorageService.deleteFile(category.getImagePath());
+            if (category.getImageUrl() != null) {
+                fileStorageService.deleteFile(category.getImageUrl());
             }
             
             categoryRepository.delete(category);

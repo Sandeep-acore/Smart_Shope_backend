@@ -22,6 +22,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private String orderNumber;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -70,25 +73,35 @@ public class Order {
 
     private LocalDateTime deliveredAt;
 
+    @PrePersist
+    protected void onCreate() {
+        // Generate a unique order number when the order is created
+        String timestamp = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String uniqueId = java.util.UUID.randomUUID().toString().substring(0, 4);
+        this.orderNumber = "ORD-" + timestamp + "-" + uniqueId;
+    }
+
     public void calculateTotals() {
-        // Calculate subtotal
+        // Calculate subtotal based on the discounted price of each item
         this.subtotal = items.stream()
-                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .map(item -> item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        // Apply discount if any
+        // Apply discount if any (coupon or promotion discount)
         if (this.discount == null) {
             this.discount = BigDecimal.ZERO;
         }
         
         // Set shipping cost if not set
         if (this.shippingCost == null) {
-            this.shippingCost = BigDecimal.ZERO;
+            // Default shipping cost can be set here or kept as ZERO
+            this.shippingCost = BigDecimal.valueOf(0);
         }
         
-        // Set tax if not set
+        // Set tax if not set (can be calculated as a percentage of subtotal)
         if (this.tax == null) {
-            this.tax = BigDecimal.ZERO;
+            // Default tax can be set here or kept as ZERO
+            this.tax = BigDecimal.valueOf(0);
         }
         
         // Calculate total

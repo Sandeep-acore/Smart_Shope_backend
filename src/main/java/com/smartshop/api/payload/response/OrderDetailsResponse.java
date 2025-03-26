@@ -63,15 +63,15 @@ public class OrderDetailsResponse {
             response.setProductId(item.getProduct().getId());
             response.setProductName(item.getProduct().getName());
             response.setQuantity(item.getQuantity());
-            response.setPrice(item.getPrice());
-            response.setSubTotal(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            response.setPrice(item.getDiscountedPrice());
+            response.setSubTotal(item.getDiscountedPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
             
             // Set product image URL
             if (item.getProduct().getImageUrl() != null && !item.getProduct().getImageUrl().isEmpty()) {
                 if (item.getProduct().getImageUrl().startsWith("http")) {
                     response.setProductImage(item.getProduct().getImageUrl());
                 } else {
-                    response.setProductImage(baseUrl + "/api/files/" + item.getProduct().getImageUrl());
+                    response.setProductImage(baseUrl + "/files/" + item.getProduct().getImageUrl());
                 }
             }
             
@@ -83,7 +83,21 @@ public class OrderDetailsResponse {
         OrderDetailsResponse response = new OrderDetailsResponse();
         response.setId(order.getId());
         response.setStatus(order.getStatus().toString());
-        response.setTotal(order.getTotal());
+        
+        // Calculate the total from order items using discounted prices
+        List<OrderItemResponse> itemResponses = order.getItems().stream()
+                .map(item -> OrderItemResponse.fromOrderItem(item, baseUrl))
+                .collect(Collectors.toList());
+        
+        // Set the items first so we can use them to calculate the total
+        response.setItems(itemResponses);
+        
+        // Calculate total from the discounted prices
+        BigDecimal calculatedTotal = itemResponses.stream()
+                .map(OrderItemResponse::getSubTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        response.setTotal(calculatedTotal);
         response.setCreatedAt(order.getCreatedAt());
         response.setUpdatedAt(order.getUpdatedAt());
         response.setUser(UserSummary.fromUser(order.getUser()));
@@ -108,13 +122,6 @@ public class OrderDetailsResponse {
                 sb.append(order.getShippingAddress().getCountry());
             }
             response.setAddress(sb.toString());
-        }
-        
-        // Map order items
-        if (order.getItems() != null) {
-            response.setItems(order.getItems().stream()
-                .map(item -> OrderItemResponse.fromOrderItem(item, baseUrl))
-                .collect(Collectors.toList()));
         }
         
         return response;

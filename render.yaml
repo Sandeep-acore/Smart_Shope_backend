@@ -3,10 +3,10 @@ services:
   - type: web
     name: smartshop-api
     env: docker
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/*.jar
-    healthCheckPath: /api/health
-    healthCheckTimeout: 60
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: ./start.sh
+    autoDeploy: true
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
@@ -24,10 +24,12 @@ services:
         value: AVNS_ZhDZPpZQMeC6uyk9TnV
       - key: JWT_SECRET
         generateValue: true
+      - key: TZ
+        value: UTC
 
-databases:
-  # This section is kept if you want to use Render's internal DB in the future
-  - name: smart-shop-db
-    plan: free
-    databaseName: smart_shop
-    ipAllowList: [] 
+# No need for database definition since we're using Aiven
+# databases:
+#   - name: smart-shop-db
+#     plan: free
+#     databaseName: smart_shop
+#     ipAllowList: [] 

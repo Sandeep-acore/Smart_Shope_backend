@@ -1,6 +1,5 @@
 package com.smartshop.api.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -18,38 +17,45 @@ import java.time.LocalDateTime;
 @Table(name = "products")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 100)
+    @Column(nullable = false)
     private String name;
 
-    @Size(max = 1000)
+    @Column(length = 1000)
     private String description;
 
-    @NotNull
-    @Min(0)
+    @Column(nullable = false)
     private BigDecimal price;
 
-    @Min(0)
+    @Column(name = "discounted_price")
+    private BigDecimal discountedPrice;
+
+    @Column(name = "stock_quantity", nullable = false)
     private Integer stockQuantity;
 
+    @Column(name = "discount_percentage")
+    private Integer discountPercentage;
+
+    @Column(name = "image_url")
     private String imageUrl;
 
-    @Min(0)
-    private Integer discountPercentage = 0;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcategory_id", nullable = false)
+    private SubCategory subCategory;
+
+    @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
@@ -59,17 +65,24 @@ public class Product {
         this.price = price;
         this.stockQuantity = stockQuantity;
         this.category = category;
+        this.discountedPrice = price;
+        this.discountPercentage = 0;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public BigDecimal getDiscountedPrice() {
-        if (discountPercentage == null || discountPercentage == 0) {
-            return price;
+    public void setDiscountPercentage(Integer discountPercentage) {
+        this.discountPercentage = discountPercentage;
+        if (discountPercentage != null && discountPercentage > 0) {
+            BigDecimal discountAmount = price.multiply(BigDecimal.valueOf(discountPercentage))
+                    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+            this.discountedPrice = price.subtract(discountAmount);
+        } else {
+            this.discountedPrice = price;
         }
-        
-        // Calculate discount amount
-        BigDecimal discountAmount = price.multiply(BigDecimal.valueOf(discountPercentage)).divide(BigDecimal.valueOf(100));
-        
-        // Subtract discount amount from original price
-        return price.subtract(discountAmount);
+    }
+
+    public void setDiscountedPrice(BigDecimal discountedPrice) {
+        this.discountedPrice = discountedPrice;
     }
 } 
