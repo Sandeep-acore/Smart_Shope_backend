@@ -1,0 +1,173 @@
+2025-03-26 13:42:45 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg]
+2025-03-26 13:42:45 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [4] as [VARCHAR] - [EEliche.jpg]
+2025-03-26 13:42:45 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [5] as [VARCHAR] - [image/jpeg]
+2025-03-26 13:42:46 [http-nio-8080-exec-5] INFO  c.s.api.services.FileStorageService - Successfully stored file in database with path: subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg
+2025-03-26 13:42:46 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        subcategories
+        (category_id, created_at, description, image_url, name, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?)
+2025-03-26 13:42:46 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [BIGINT] - [1]
+2025-03-26 13:42:46 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [2] as [TIMESTAMP] - [2025-03-26T13:42:46.836249]
+2025-03-26 13:42:46 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [3] as [VARCHAR] - [Just Piyo]
+2025-03-26 13:42:46 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [4] as [VARCHAR] - [subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg]
+2025-03-26 13:42:46 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [5] as [VARCHAR] - [pani]
+2025-03-26 13:42:46 [http-nio-8080-exec-5] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [6] as [TIMESTAMP] - [2025-03-26T13:42:46.836249]
+2025-03-26 13:43:05 [http-nio-8080-exec-3] INFO  c.s.api.controllers.FileController - Retrieving file from path: subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg
+2025-03-26 13:43:05 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        filedata0_.id as id1_3_,
+        filedata0_.created_at as created_2_3_,
+        filedata0_.data as data3_3_,
+        filedata0_.path as path4_3_,
+        filedata0_.name as name5_3_,
+        filedata0_.type as type6_3_ 
+    from
+        file_data filedata0_ 
+    where
+        filedata0_.path=?
+2025-03-26 13:43:05 [http-nio-8080-exec-3] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg]
+2025-03-26 13:43:06 [http-nio-8080-exec-3] INFO  c.s.api.services.FileStorageService - Successfully loaded file from database: subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg, size: 2427274 bytes
+2025-03-26 13:43:06 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        filedata0_.id as id1_3_,
+        filedata0_.created_at as created_2_3_,
+        filedata0_.data as data3_3_,
+        filedata0_.path as path4_3_,
+        filedata0_.name as name5_3_,
+        filedata0_.type as type6_3_ 
+    from
+        file_data filedata0_ 
+    where
+        filedata0_.path=?
+2025-03-26 13:43:06 [http-nio-8080-exec-3] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg]
+2025-03-26 13:44:04 [http-nio-8080-exec-9] INFO  c.s.api.controllers.FileController - Retrieving file from path: subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg
+2025-03-26 13:44:04 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        filedata0_.id as id1_3_,
+        filedata0_.created_at as created_2_3_,
+        filedata0_.data as data3_3_,
+        filedata0_.path as path4_3_,
+        filedata0_.name as name5_3_,
+        filedata0_.type as type6_3_ 
+    from
+        file_data filedata0_ 
+    where
+        filedata0_.path=?
+2025-03-26 13:44:04 [http-nio-8080-exec-9] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg]
+2025-03-26 13:44:04 [http-nio-8080-exec-9] INFO  c.s.api.services.FileStorageService - Successfully loaded file from database: subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg, size: 2427274 bytes
+2025-03-26 13:44:04 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        filedata0_.id as id1_3_,
+        filedata0_.created_at as created_2_3_,
+        filedata0_.data as data3_3_,
+        filedata0_.path as path4_3_,
+        filedata0_.name as name5_3_,
+        filedata0_.type as type6_3_ 
+    from
+        file_data filedata0_ 
+    where
+        filedata0_.path=?
+2025-03-26 13:44:04 [http-nio-8080-exec-9] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg]
+2025-03-26 13:44:48 [http-nio-8080-exec-1] INFO  c.s.api.controllers.FileController - Retrieving file from path: subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg
+2025-03-26 13:44:48 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        filedata0_.id as id1_3_,
+        filedata0_.created_at as created_2_3_,
+        filedata0_.data as data3_3_,
+        filedata0_.path as path4_3_,
+        filedata0_.name as name5_3_,
+        filedata0_.type as type6_3_ 
+    from
+        file_data filedata0_ 
+    where
+        filedata0_.path=?
+2025-03-26 13:44:48 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg]
+2025-03-26 13:44:48 [http-nio-8080-exec-1] INFO  c.s.api.services.FileStorageService - Successfully loaded file from database: subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg, size: 2427274 bytes
+2025-03-26 13:44:48 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        filedata0_.id as id1_3_,
+        filedata0_.created_at as created_2_3_,
+        filedata0_.data as data3_3_,
+        filedata0_.path as path4_3_,
+        filedata0_.name as name5_3_,
+        filedata0_.type as type6_3_ 
+    from
+        file_data filedata0_ 
+    where
+        filedata0_.path=?
+2025-03-26 13:44:48 [http-nio-8080-exec-1] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [subcategories/3fb9136c-fd25-4895-b976-da75689adb5c.jpg]
+2025-03-26 14:09:19 [main] INFO  c.smartshop.api.SmartShopApplication - Starting SmartShopApplication using Java 17.0.14 on DESKTOP-5RIF71Q with PID 10136 (D:\Smart_Shope_backend\target\classes started by Rohit in D:\Smart_Shope_backend)
+2025-03-26 14:09:19 [main] DEBUG c.smartshop.api.SmartShopApplication - Running with Spring Boot v2.7.14, Spring v5.3.29
+2025-03-26 14:09:19 [main] INFO  c.smartshop.api.SmartShopApplication - No active profile set, falling back to 1 default profile: "default"
+2025-03-26 14:09:20 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-03-26 14:09:20 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 105 ms. Found 12 JPA repository interfaces.
+2025-03-26 14:09:21 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-03-26 14:09:21 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-03-26 14:09:21 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.78]
+2025-03-26 14:09:21 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-03-26 14:09:21 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1715 ms
+2025-03-26 14:09:21 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-03-26 14:09:22 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-03-26 14:09:22 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-03-26 14:09:22 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 5.6.15.Final
+2025-03-26 14:09:22 [main] INFO  o.h.annotations.common.Version - HCANN000001: Hibernate Commons Annotations {5.1.2.Final}
+2025-03-26 14:09:23 [main] INFO  org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+2025-03-26 14:09:26 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-03-26 14:09:26 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-03-26 14:09:27 [main] DEBUG c.s.api.security.jwt.AuthTokenFilter - Filter 'authenticationJwtTokenFilter' configured for use
+2025-03-26 14:09:27 [main] INFO  c.s.api.services.FileStorageService - Initialized file storage service for database storage
+2025-03-26 14:09:28 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2723b0d0, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7137cd14, org.springframework.security.web.context.SecurityContextPersistenceFilter@32eb38e5, org.springframework.security.web.header.HeaderWriterFilter@67afc9b6, org.springframework.web.filter.CorsFilter@47d0195b, org.springframework.security.web.authentication.logout.LogoutFilter@68ea1eb5, com.smartshop.api.security.jwt.AuthTokenFilter@3163e03b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@21539796, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@13e6c544, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6de2344a, org.springframework.security.web.session.SessionManagementFilter@7ca7bddd, org.springframework.security.web.access.ExceptionTranslationFilter@231c521e, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@463746eb]
+2025-03-26 14:09:29 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/api'
+2025-03-26 14:09:29 [main] INFO  c.smartshop.api.SmartShopApplication - Started SmartShopApplication in 9.791 seconds (JVM running for 10.338)
+2025-03-26 14:09:29 [main] INFO  c.s.api.config.DataMigrationUtil - Starting data migration for image files...
+2025-03-26 14:09:29 [main] INFO  c.s.api.config.DataMigrationUtil - Processing directory: products
+2025-03-26 14:09:29 [main] INFO  c.s.api.config.DataMigrationUtil - Processing directory: categories
+2025-03-26 14:09:29 [main] INFO  c.s.api.config.DataMigrationUtil - Processing directory: profiles
+2025-03-26 14:09:29 [main] INFO  c.s.api.config.DataMigrationUtil - Processing directory: offers
+2025-03-26 14:09:29 [main] DEBUG org.hibernate.SQL - 
+    select
+        count(*) as col_0_0_ 
+    from
+        roles role0_
+2025-03-26 14:09:29 [main] DEBUG org.hibernate.SQL - 
+    select
+        user0_.id as col_0_0_ 
+    from
+        users user0_ 
+    where
+        user0_.email=? limit ?
+2025-03-26 14:09:29 [main] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [admin@smartshop.com]
+2025-03-26 14:09:44 [http-nio-8080-exec-2] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-03-26 14:09:44 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-03-26 14:09:44 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-03-26 14:09:45 [http-nio-8080-exec-2] INFO  c.s.api.controllers.FileController - Retrieving file from path: subcategories/ff50b222-4adf-4d3e-8691-84b3338abac7.jpg
+2025-03-26 14:09:45 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        filedata0_.id as id1_3_,
+        filedata0_.created_at as created_2_3_,
+        filedata0_.data as data3_3_,
+        filedata0_.path as path4_3_,
+        filedata0_.name as name5_3_,
+        filedata0_.type as type6_3_ 
+    from
+        file_data filedata0_ 
+    where
+        filedata0_.path=?
+2025-03-26 14:09:45 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [subcategories/ff50b222-4adf-4d3e-8691-84b3338abac7.jpg]
+2025-03-26 14:09:45 [http-nio-8080-exec-2] INFO  c.s.api.services.FileStorageService - Successfully loaded file from database: subcategories/ff50b222-4adf-4d3e-8691-84b3338abac7.jpg, size: 2427274 bytes
+2025-03-26 14:09:45 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        filedata0_.id as id1_3_,
+        filedata0_.created_at as created_2_3_,
+        filedata0_.data as data3_3_,
+        filedata0_.path as path4_3_,
+        filedata0_.name as name5_3_,
+        filedata0_.type as type6_3_ 
+    from
+        file_data filedata0_ 
+    where
+        filedata0_.path=?
+2025-03-26 14:09:45 [http-nio-8080-exec-2] TRACE o.h.type.descriptor.sql.BasicBinder - binding parameter [1] as [VARCHAR] - [subcategories/ff50b222-4adf-4d3e-8691-84b3338abac7.jpg]
