@@ -17,7 +17,7 @@ services:
       - key: PORT
         value: 10000
       - key: APP_URL
-        value: https://smartshop-api.onrender.com/api
+        value: https://smart-shope-backend.onrender.com/api
       - key: FILE_UPLOAD_DIR
         value: /data/uploads
       - key: AIVEN_DB_HOST
