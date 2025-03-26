@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -50,6 +51,7 @@ public class SubCategoryController {
     }
 
     @GetMapping("/category/{categoryId}")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<SubCategoryResponse>> getSubCategoriesByCategory(@PathVariable Long categoryId) {
         String baseUrl = getBaseUrl();
         List<SubCategory> subCategories = subCategoryRepository.findByCategoryId(categoryId);
@@ -63,6 +65,7 @@ public class SubCategoryController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> createSubCategory(
             @RequestParam("name") String name,
             @RequestParam("description") String description,
@@ -116,6 +119,7 @@ public class SubCategoryController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public ResponseEntity<List<SubCategoryResponse>> getAllSubCategories() {
         String baseUrl = getBaseUrl();
         List<SubCategory> subCategories = subCategoryRepository.findAll();
@@ -128,6 +132,7 @@ public class SubCategoryController {
     }
 
     @GetMapping("/{id}")
+    @Transactional(readOnly = true)
     public ResponseEntity<SubCategoryResponse> getSubCategory(@PathVariable Long id) {
         return subCategoryRepository.findById(id)
                 .map(subCategory -> {
@@ -139,6 +144,7 @@ public class SubCategoryController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> updateSubCategory(
             @PathVariable Long id,
             @RequestParam("name") String name,
@@ -203,6 +209,8 @@ public class SubCategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
     public ResponseEntity<?> deleteSubCategory(@PathVariable Long id) {
         try {
             SubCategory subCategory = subCategoryRepository.findById(id)

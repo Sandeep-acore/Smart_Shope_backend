@@ -7,6 +7,10 @@ services:
     buildCommand: ./build.sh
     startCommand: ./start.sh
     autoDeploy: true
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
@@ -14,6 +18,8 @@ services:
         value: 10000
       - key: APP_URL
         value: https://smartshop-api.onrender.com
+      - key: FILE_UPLOAD_DIR
+        value: /data/uploads
       - key: AIVEN_DB_HOST
         value: smartshop-sandeep-e8db.h.aivencloud.com
       - key: AIVEN_DB_PORT
