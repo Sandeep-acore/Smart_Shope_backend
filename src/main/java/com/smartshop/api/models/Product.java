@@ -25,7 +25,7 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Column(length = 1000)
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
 
     @Column(nullable = false)
@@ -84,5 +84,14 @@ public class Product {
 
     public void setDiscountedPrice(BigDecimal discountedPrice) {
         this.discountedPrice = discountedPrice;
+    }
+
+    public void setDescription(String description) {
+        if (description != null) {
+            // Replace escaped newlines with actual newlines
+            this.description = description.replace("\\n", "\n");
+        } else {
+            this.description = null;
+        }
     }
 } 
